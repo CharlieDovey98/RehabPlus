@@ -1,4 +1,4 @@
-package com.CharlieDovey.RehabPlus.ui.theme
+package com.charliedovey.rehabplus.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

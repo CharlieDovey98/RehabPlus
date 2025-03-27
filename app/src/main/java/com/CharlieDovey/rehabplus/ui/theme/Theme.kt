@@ -1,4 +1,4 @@
-package com.CharlieDovey.RehabPlus.ui.theme
+package com.charliedovey.rehabplus.ui.theme
 
 import android.app.Activity
 import android.os.Build

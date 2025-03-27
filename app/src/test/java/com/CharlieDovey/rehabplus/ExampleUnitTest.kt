@@ -1,4 +1,4 @@
-package com.CharlieDovey.RehabPlus
+package com.charliedovey.rehabplus
 
 import org.junit.Test
 

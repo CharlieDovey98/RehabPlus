@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.CharlieDovey.RehabPlus"
+    namespace = "com.charliedovey.rehabplus"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.CharlieDovey.RehabPlus"
+        applicationId = "com.charliedovey.rehabplus"
         minSdk = 24
         targetSdk = 35
         versionCode = 1
@@ -56,4 +56,8 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation("com.microsoft.identity.client:msal:2.0.10") {
+        exclude(group = "com.microsoft.device.display", module = "display-mask")
+    }
+
 }
