@@ -1,47 +1,31 @@
 package com.charliedovey.rehabplus
 
+// Importing necessary classes from Android and Jetpack Compose.
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+
+
+// Project imports
+import com.charliedovey.rehabplus.ui.screens.LoginScreen
 import com.charliedovey.rehabplus.ui.theme.RehabPlusTheme
 
+/**
+ * MainActivity is the entry point of the app.
+ * It holds the user interface content shown when when the app is launched.
+ */
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            RehabPlusTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+
+        enableEdgeToEdge() // Enables full use of the phone screen.
+            setContent { // Set the main UI content of the app.
+                RehabPlusTheme { // Apply the RehabPlus theme.
+                    LoginScreen() // Show the LoginScreen as the app's first screen.
                 }
             }
+        AuthManager.init(applicationContext) { // Initialises MSAL with the application context.
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    RehabPlusTheme {
-        Greeting("Android")
     }
 }

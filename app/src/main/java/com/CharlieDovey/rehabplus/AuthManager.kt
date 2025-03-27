@@ -1,46 +1,85 @@
-package com.charliedovey.rehabplus.auth
+package com.charliedovey.rehabplus
 
+// Importing necessary classes from Android and MSAL.
 import android.app.Activity
 import android.content.Context
-import com.microsoft.identity.client.AuthenticationCallback
-import com.microsoft.identity.client.IAccount
-import com.microsoft.identity.client.IAuthenticationResult
-import com.microsoft.identity.client.IPublicClientApplication
-import com.microsoft.identity.client.PublicClientApplication
+import android.util.Log
+import com.microsoft.identity.client.* // Microsoft Authentication Library (MSAL).
 import com.microsoft.identity.client.exception.MsalException
-import com.charliedovey.rehabplus.R
 
+/**
+ * AuthManager handles user authentication using MSAL.
+ * This class takes care of initialising MSAL and launching the sign-in screen, handling the result.
+ */
 object AuthManager {
 
-    private var msalApp: IPublicClientApplication? = null
+    private var msalApp: IMultipleAccountPublicClientApplication? = null
 
-    fun init(context: Context) {
-        msalApp = PublicClientApplication.create(
+    // Initialises the MSAL application using msal_config.json.
+    fun init(context: Context, onReady: () -> Unit) {
+        Log.d("AuthManager", "init() called")
+
+        Logger.getInstance().apply {
+            setLogLevel(Logger.LogLevel.VERBOSE)
+            setEnableLogcatLog(true)
+        }
+        MultipleAccountPublicClientApplication.create(
             context,
-            R.raw.msal_config
+            R.raw.msal_config,
+            object : IPublicClientApplication.ApplicationCreatedListener {
+                override fun onCreated(application: IPublicClientApplication) {
+                    Log.d("AuthManager", "MSAL initialised successfully")
+                    msalApp = application as IMultipleAccountPublicClientApplication
+                    onReady() // Callback function to say MSAL is ready.
+                }
+
+                override fun onError(exception: MsalException) {
+                    Log.e("AuthManager", "MSAL init failed: ${exception.message}")
+                    exception.printStackTrace()
+                }
+            }
         )
     }
 
+    // Function to start the sign in flow of the user using Azure AD B2C.
     fun signIn(activity: Activity, callback: (IAccount?) -> Unit) {
-        msalApp?.let { app ->
-            app.acquireToken(
-                activity,
-                arrayOf("https://graph.microsoft.com/User.Read"),
-                object : AuthenticationCallback {
-                    override fun onSuccess(authenticationResult: IAuthenticationResult) {
-                        callback(authenticationResult.account)
-                    }
+        Log.d("AuthManager", "signIn() called")
 
-                    override fun onError(exception: MsalException) {
-                        exception.printStackTrace()
-                        callback(null)
-                    }
-
-                    override fun onCancel() {
-                        callback(null)
-                    }
-                }
-            )
+        // Check the MSAL APP has been initialised, then acquire the user information declared in Azure and attempt to sign in.
+        if (msalApp == null) {
+            Log.e("AuthManager", "msalApp is NULL! Did init() fail?")
+            callback(null)
+            return
         }
+
+        Log.d("AuthManager", "msalApp is NOT null. Starting acquireToken...")
+        msalApp!!.acquireToken(
+            activity,
+            arrayOf("https://graph.microsoft.com/User.Read"),
+            object : AuthenticationCallback {
+                // Called when authentication is successful.
+                override fun onSuccess(authenticationResult: IAuthenticationResult) {
+                    Log.d("AuthManager", "Authentication successful!")
+
+                    callback(authenticationResult.account) // Return the authenticated user's account object.
+                }
+
+                // Called when authentication fails due to an exception.
+                override fun onError(exception: MsalException) {
+                    Log.e("AuthManager", "Authentication error: ${exception.message}")
+
+                    exception.printStackTrace()
+                    callback(null) // Return null.
+                }
+
+                // Called if the user cancels the sign in process.
+                override fun onCancel() {
+                    Log.w("AuthManager", "User cancelled sign-in")
+                    callback(null)
+                }
+            }
+        )
     }
+
 }
+
