@@ -1,6 +1,6 @@
 package com.charliedovey.rehabplus
 
-// Importing necessary classes from Android and Jetpack Compose.
+// Importing necessary libraries for Android.
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -8,7 +8,8 @@ import androidx.activity.enableEdgeToEdge
 
 
 // Project imports
-import com.charliedovey.rehabplus.ui.screens.LoginScreen
+import com.charliedovey.rehabplus.ui.screens.LoginScreen // commented out due to errors with MSAL.
+import com.charliedovey.rehabplus.ui.screens.HomeScreen
 import com.charliedovey.rehabplus.ui.theme.RehabPlusTheme
 
 /**
@@ -22,7 +23,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge() // Enables full use of the phone screen.
             setContent { // Set the main UI content of the app.
                 RehabPlusTheme { // Apply the RehabPlus theme.
-                    LoginScreen() // Show the LoginScreen as the app's first screen.
+                    HomeScreen(username = "Charlie")
+                    //LoginScreen() // [errors] Show the LoginScreen as the app's first screen.
                 }
             }
         AuthManager.init(applicationContext) { // Initialises MSAL with the application context.

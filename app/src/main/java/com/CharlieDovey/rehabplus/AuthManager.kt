@@ -1,6 +1,6 @@
 package com.charliedovey.rehabplus
 
-// Importing necessary classes from Android and MSAL.
+// Import necessary libraries for Android and MSAL.
 import android.app.Activity
 import android.content.Context
 import android.util.Log

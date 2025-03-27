@@ -1,6 +1,6 @@
 package com.charliedovey.rehabplus.ui.screens
 
-// Importing necessary classes from Android and Jetpack Compose.
+// Importing necessary libraries for Android and Jetpack Compose.
 import android.app.Activity
 import android.widget.Toast // Toast non intrusive, temporary popup messages.
 
