@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.sp
 // Project imports.
 import com.charliedovey.rehabplus.model.AssignedExercise
 import com.charliedovey.rehabplus.model.Exercise
+import com.charliedovey.rehabplus.ui.components.VideoPlayer
 
 @Composable
 fun ExerciseDetailScreen(
@@ -67,21 +68,13 @@ fun ExerciseDetailScreen(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Video Placeholder.
-        Box(
+        // Video player for the exercise.
+        VideoPlayer(
+            videoUrl = exercise.videoUrl,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp)
-                .background(Color.LightGray, RoundedCornerShape(8.dp)),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = Icons.Default.PlayArrow,
-                contentDescription = "Play Video",
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(48.dp)
-            )
-        }
+                .aspectRatio(16 / 9f)
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 

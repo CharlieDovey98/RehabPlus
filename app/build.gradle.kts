@@ -56,7 +56,10 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    implementation("androidx.navigation:navigation-compose:2.8.9")
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.coil.compose)
+    implementation(libs.androidx.media3.ui)
     implementation("com.microsoft.identity.client:msal:2.0.10") {
         exclude(group = "com.microsoft.device.display", module = "display-mask")
     }

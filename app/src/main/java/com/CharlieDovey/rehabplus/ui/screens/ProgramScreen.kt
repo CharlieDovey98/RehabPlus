@@ -9,7 +9,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -18,7 +17,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.graphics.Color
-
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.draw.clip
+import coil.compose.AsyncImage
 // Import Java libraries for working with date and time.
 import java.text.SimpleDateFormat
 import java.util.*
@@ -34,9 +35,10 @@ import com.charliedovey.rehabplus.model.AssignedExercise
  */
 
 @Composable
-fun ProgramScreen(program: Program,
-                  exerciseMap: Map<String, Exercise>,
-                  onExerciseClick: (AssignedExercise) -> Unit
+fun ProgramScreen(
+    program: Program,
+    exerciseMap: Map<String, Exercise>,
+    onExerciseClick: (AssignedExercise) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -113,7 +115,7 @@ fun ProgramScreen(program: Program,
                     Card( // Create a card and present the exercises details on.
                         modifier = Modifier.fillMaxWidth(),
                         onClick = { onExerciseClick(assigned) }, // Onclick function to open the detailed exercise view with video explanation.
-                            // TODO: On click navigate to detailed exercise page.
+                        // TODO: On click navigate to detailed exercise page.
                         shape = RoundedCornerShape(8.dp)
                     ) {
                         Row(
@@ -123,14 +125,16 @@ fun ProgramScreen(program: Program,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             // Exercise thumbnail.
-                            Icon(
-                                imageVector = Icons.Default.PlayArrow, // Using a play icon for the video instead of a thumbnail. Change to thumbnail in the future.
-                                contentDescription = "View exercise",
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(50.dp)
+                            AsyncImage(
+                                model = exercise.thumbnailUrl,
+                                contentDescription = "Exercise thumbnail",
+                                modifier = Modifier
+                                    .size(100.dp)
+                                    .clip(RoundedCornerShape(30.dp)),
+                                contentScale = ContentScale.Fit // Ensure the thumbnail is completely showing.
                             )
 
-                            Spacer(modifier = Modifier.width(40.dp))
+                            Spacer(modifier = Modifier.width(10.dp))
 
                             // Core exercise information.
                             Column(modifier = Modifier.weight(1f)) {
@@ -138,13 +142,13 @@ fun ProgramScreen(program: Program,
                                 Text(exercise.shortDescription, fontSize = 13.sp)
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
-                                    buildString {
+                                    buildString { // Build a string consisting of Reps, Sets, and Hold if above 0.
                                         append("Reps: ${assigned.reps}   Sets: ${assigned.sets}")
                                         if (assigned.holdTime > 0) {
                                             append("   Hold: ${assigned.holdTime}s")
                                         }
                                     },
-                                    fontSize = 12.sp
+                                    fontSize = 12.sp, fontWeight = FontWeight.Bold
                                 )
                             }
 

@@ -6,4 +6,5 @@ data class Exercise(
     val shortDescription: String,
     val longDescription: String,
     val videoUrl: String,
+    val thumbnailUrl: String
 )

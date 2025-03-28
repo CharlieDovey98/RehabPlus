@@ -25,65 +25,66 @@ val dbExerciseList = listOf(
     // Temporary list of example exercises the app might use. To be replaced with exercises stored in azure.
     Exercise(
         "1",
-        "Heel slides",
-        "Bend the knee, bringing your heel towards your buttocks.",
-        "Lie on your back with your legs straight and together. Bend the symptomatic leg as far as you can, sliding your heel towards your buttocks, keeping the knee upright throughout this movement. slide the heel back down, reversing the movement until your leg is straight again.",
-        "VideoURL"
-    ),
-    Exercise(
-        "2",
         "Step up",
         "Step up onto a raised platform.",
         "Stand facing a platform. Place one leg up on the platform. Step up bringing your other leg onto the platform and then step back down, returning to your starting position. Make sure your knee travels forwards over your toes during the stepping motion.",
-        "https://rehabplusmedia.blob.core.windows.net/videos/Step-Up-Exercise.mp4"
+        "https://rehabplusmedia.blob.core.windows.net/videos/Step-Up.mp4",
+        "https://rehabplusmedia.blob.core.windows.net/images/Step-Up.png"
+    ),
+    Exercise(
+        "2",
+        "Bridging",
+        "Lift hips off the ground into a bridge position.",
+        "Lie on your back with your knees bent and feet flat on the floor. Engage your glutes and lift your hips upwards, creating a straight line from your shoulders to your knees. Hold briefly, then slowly lower your hips back to the ground in a controlled motion.",
+        "https://rehabplusmedia.blob.core.windows.net/videos/Bridging-Exercise.mp4",
+"https://rehabplusmedia.blob.core.windows.net/images/Bridging-Exercise.png"
     ),
     Exercise(
         "3",
-        "Sideways step",
-        "Step sideways onto a raised platform.",
-        "Stand up straight, side on to a platform. Place your closest leg to the platform onto the platform and step up. Push through your raised leg, and stand tall, hovering your other leg above the floor. Return your down onto the floor keeping you other leg on the platform. You may use a handrail or chair to hold onto for support if required.",
-        "VideoURL"
+        "Wall Squat",
+        "Slide down the wall into a squat position.",
+        "Stand with your back against a wall and your feet shoulder-width apart, about a foot away from the wall. Slowly slide down until your knees are at a 90-degree angle, keeping your back flat against the wall. Hold the position briefly and then push back up to standing.",
+        "https://rehabplusmedia.blob.core.windows.net/videos/Wall-Squats.mp4",
+        "https://rehabplusmedia.blob.core.windows.net/images/Wall-Squats.png"
     ),
     Exercise(
         "4",
-        "Step up 2",
-        "Step up onto a raised platform.",
-        "Stand facing a platform. Place one leg up on the platform. Step up bringing your other leg onto the platform and then step back down, returning to your starting position. Make sure your knee travels forwards over your toes during the stepping motion.",
-        "https://rehabplusmedia.blob.core.windows.net/videos/Step-Up-Exercise.mp4"
+        "Hamstring Stretch",
+        "Stretch the back of the thigh to improve flexibility.",
+        "Sit on the floor with one leg extended straight and the other bent inwards. Keeping your back straight, lean forward from your hips toward your extended foot, reaching with your hands until you feel a stretch in the back of your thigh. Hold the stretch, then return upright.",
+        "https://rehabplusmedia.blob.core.windows.net/videos/Hamstring-Stretch.mp4",
+        "https://rehabplusmedia.blob.core.windows.net/images/Hamstring-Stretch.png"
     ),
     Exercise(
         "5",
-        "Step up 3",
-        "Step up onto a raised platform.",
-        "Stand facing a platform. Place one leg up on the platform. Step up bringing your other leg onto the platform and then step back down, returning to your starting position. Make sure your knee travels forwards over your toes during the stepping motion.",
-        "https://rehabplusmedia.blob.core.windows.net/videos/Step-Up-Exercise.mp4"
-    ),
+        "Hip Flexor Stretch",
+        "Stretch the front of your hip and thigh.",
+        "Begin in a kneeling lunge position with one foot forward and the other knee on the ground. Shift your weight forward slightly, keeping your torso upright, until you feel a stretch in the front of your hip on the kneeling leg. Hold the stretch and switch sides.",
+        "https://rehabplusmedia.blob.core.windows.net/videos/Hip-Flexor-Stretch.mp4",
+        "https://rehabplusmedia.blob.core.windows.net/images/Hip-Flexor-Stretch.png"
+    )
+    ,
     Exercise(
         "6",
-        "Step up 4",
-        "Step up onto a raised platform.",
-        "Stand facing a platform. Place one leg up on the platform. Step up bringing your other leg onto the platform and then step back down, returning to your starting position. Make sure your knee travels forwards over your toes during the stepping motion.",
-        "https://rehabplusmedia.blob.core.windows.net/videos/Step-Up-Exercise.mp4"
-    ),
-    Exercise(
-        "7",
-        "Heel slides 2",
-        "Bend the knee, bringing your heel towards your buttocks.",
-        "Lie on your back with your legs straight and together. Bend the symptomatic leg as far as you can, sliding your heel towards your buttocks, keeping the knee upright throughout this movement. slide the heel back down, reversing the movement until your leg is straight again.",
-        "VideoURL"
-))
+        "Knee to Chest Stretch",
+        "Pull your knee to your chest to release tension.",
+        "Lie on your back with both legs extended. Gently pull one knee toward your chest using your hands, keeping the other leg flat on the floor. Hold the stretch, then switch sides. Keep your back relaxed and avoid lifting your head or shoulders.",
+        "https://rehabplusmedia.blob.core.windows.net/videos/Knee-to-Chest-Stretch.mp4",
+        "https://rehabplusmedia.blob.core.windows.net/images/Knee-To-Chest-Stretch.png"
+    )
+)
 
 val sampleProgram = Program(
     id = "p1",
     name = "ACL Recovery Plan",
     instructions = "Follow this plan twice a day",
     assignedExercises = listOf(
-        AssignedExercise("1", 10, 3, 30, false),
-        AssignedExercise("2", 12, 3, 3, true),
-        AssignedExercise("3", 15, 4, 5, false),
-        AssignedExercise("2", 12, 3, 0, true),
-        AssignedExercise("2", 12, 3, 3, false),
+        AssignedExercise("1", 10, 3, 5, false),
         AssignedExercise("2", 12, 3, 5, false),
+        AssignedExercise("3", 15, 4, 3, false),
+        AssignedExercise("4", 12, 3, 12, false),
+        AssignedExercise("5", 12, 3, 8, false),
+        AssignedExercise("6", 12, 3, 8, false),
 
         )
 )
