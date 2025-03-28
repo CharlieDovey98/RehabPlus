@@ -16,8 +16,8 @@ import androidx.compose.ui.unit.dp
 import com.charliedovey.rehabplus.AuthManager // Import AuthManager object.
 
 /**
- * LoginScreen handles user log in composable.
- * This file takes care of jetpack compose ui for the sign in screen, with toast feedback messages.
+ * LoginScreen handles user log in using composable.
+ * This file uses jetpack compose ui for the sign in screen, with toast feedback messages.
  */
 
 // A @Composable function from Jetpack Compose UI.
