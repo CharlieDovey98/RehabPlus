@@ -12,7 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-
+// Project imports.
 import com.charliedovey.rehabplus.AuthManager // Import AuthManager object.
 
 /**

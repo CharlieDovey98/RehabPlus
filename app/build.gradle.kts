@@ -56,6 +56,7 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation("androidx.navigation:navigation-compose:2.8.9")
     implementation("com.microsoft.identity.client:msal:2.0.10") {
         exclude(group = "com.microsoft.device.display", module = "display-mask")
     }

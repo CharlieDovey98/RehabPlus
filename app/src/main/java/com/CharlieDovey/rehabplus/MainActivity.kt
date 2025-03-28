@@ -5,16 +5,16 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.navigation.compose.rememberNavController // Import the navigation controller object to handle app screen navigation.
+// Project imports
 import com.charliedovey.rehabplus.model.AssignedExercise
 import com.charliedovey.rehabplus.model.Exercise
 import com.charliedovey.rehabplus.model.Program
-
-
-// Project imports
-import com.charliedovey.rehabplus.ui.screens.LoginScreen // commented out due to errors with MSAL.
+import com.charliedovey.rehabplus.ui.screens.LoginScreen // Commented out due to errors with MSAL.
 import com.charliedovey.rehabplus.ui.screens.HomeScreen
 import com.charliedovey.rehabplus.ui.screens.ProgramScreen
 import com.charliedovey.rehabplus.ui.theme.RehabPlusTheme
+import com.charliedovey.rehabplus.navigation.AppNavigationGraph // Import the navigation graph composable function.
 
 /**
  * MainActivity is the entry point of the app.
@@ -35,7 +35,7 @@ val dbExerciseList = listOf(
         "Step up",
         "Step up onto a raised platform.",
         "Stand facing a platform. Place one leg up on the platform. Step up bringing your other leg onto the platform and then step back down, returning to your starting position. Make sure your knee travels forwards over your toes during the stepping motion.",
-        "VideoURL"
+        "https://rehabplusmedia.blob.core.windows.net/videos/Step-Up-Exercise.mp4"
     ),
     Exercise(
         "3",
@@ -49,21 +49,21 @@ val dbExerciseList = listOf(
         "Step up 2",
         "Step up onto a raised platform.",
         "Stand facing a platform. Place one leg up on the platform. Step up bringing your other leg onto the platform and then step back down, returning to your starting position. Make sure your knee travels forwards over your toes during the stepping motion.",
-        "VideoURL"
+        "https://rehabplusmedia.blob.core.windows.net/videos/Step-Up-Exercise.mp4"
     ),
     Exercise(
         "5",
         "Step up 3",
         "Step up onto a raised platform.",
         "Stand facing a platform. Place one leg up on the platform. Step up bringing your other leg onto the platform and then step back down, returning to your starting position. Make sure your knee travels forwards over your toes during the stepping motion.",
-        "VideoURL"
+        "https://rehabplusmedia.blob.core.windows.net/videos/Step-Up-Exercise.mp4"
     ),
     Exercise(
         "6",
         "Step up 4",
         "Step up onto a raised platform.",
         "Stand facing a platform. Place one leg up on the platform. Step up bringing your other leg onto the platform and then step back down, returning to your starting position. Make sure your knee travels forwards over your toes during the stepping motion.",
-        "VideoURL"
+        "https://rehabplusmedia.blob.core.windows.net/videos/Step-Up-Exercise.mp4"
     ),
     Exercise(
         "7",
@@ -87,7 +87,7 @@ val sampleProgram = Program(
 
         )
 )
-val exerciseMap = dbExerciseList.associateBy { it.id }
+val exerciseMapBuild = dbExerciseList.associateBy { it.id }
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -95,8 +95,13 @@ class MainActivity : ComponentActivity() {
 
         enableEdgeToEdge() // Enables full use of the phone screen.
         setContent { // Set the main UI content of the app.
+            val navigationController = rememberNavController() // Create the navigation controller.
             RehabPlusTheme { // Apply the RehabPlus theme.
-                ProgramScreen(program = sampleProgram, exerciseMap = exerciseMap)
+                AppNavigationGraph( // Launch the navigation system with a dummy program.
+                    navController = navigationController,
+                    program = sampleProgram,
+                    exerciseMap = exerciseMapBuild
+                )
                 //HomeScreen(username = "Charlie")
                 //LoginScreen() // [errors] Show the LoginScreen as the app's first screen.
             }

@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 // Import Java libraries for working with date and time.
 import java.text.SimpleDateFormat
 import java.util.*
+// Project imports.
 import com.charliedovey.rehabplus.model.Exercise
 import com.charliedovey.rehabplus.model.Program
 import com.charliedovey.rehabplus.model.AssignedExercise
@@ -33,7 +34,10 @@ import com.charliedovey.rehabplus.model.AssignedExercise
  */
 
 @Composable
-fun ProgramScreen(program: Program, exerciseMap: Map<String, Exercise>) {
+fun ProgramScreen(program: Program,
+                  exerciseMap: Map<String, Exercise>,
+                  onExerciseClick: (AssignedExercise) -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -47,7 +51,7 @@ fun ProgramScreen(program: Program, exerciseMap: Map<String, Exercise>) {
         )
         Spacer(modifier = Modifier.height(4.dp))
 
-        // Current Date, to be displayed at the top of the page.
+        // Current Date displayed at the top of the page.
         val currentDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
 
         Row(
@@ -56,14 +60,14 @@ fun ProgramScreen(program: Program, exerciseMap: Map<String, Exercise>) {
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Left arrow, used to cycle back in time by day.
+            // Left arrow to cycle back in time by day.
             IconButton(onClick = {
                 // TODO: Navigate to the previous days date.
             }) {
                 Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Previous Day")
             }
 
-            // Date text in the middle.
+            // Date at the top of the screen.
             Text(
                 text = currentDate,
                 fontSize = 14.sp,
@@ -108,9 +112,8 @@ fun ProgramScreen(program: Program, exerciseMap: Map<String, Exercise>) {
                 if (exercise != null) { // Check that the referenced exercise exists.
                     Card( // Create a card and present the exercises details on.
                         modifier = Modifier.fillMaxWidth(),
-                        onClick = { // Onclick function to open the detailed exercise view with video explanation.
+                        onClick = { onExerciseClick(assigned) }, // Onclick function to open the detailed exercise view with video explanation.
                             // TODO: On click navigate to detailed exercise page.
-                        },
                         shape = RoundedCornerShape(8.dp)
                     ) {
                         Row(
@@ -150,7 +153,7 @@ fun ProgramScreen(program: Program, exerciseMap: Map<String, Exercise>) {
                                 Icon(
                                     imageVector = Icons.Default.Check,
                                     contentDescription = "Complete",
-                                    tint = Color(0xFF4CAF50),
+                                    tint = Color(0xFF08880E),
                                     modifier = Modifier.size(30.dp)
                                 )
                             }
