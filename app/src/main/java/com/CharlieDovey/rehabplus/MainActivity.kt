@@ -10,11 +10,12 @@ import androidx.navigation.compose.rememberNavController // Import the navigatio
 import com.charliedovey.rehabplus.model.AssignedExercise
 import com.charliedovey.rehabplus.model.Exercise
 import com.charliedovey.rehabplus.model.Program
-import com.charliedovey.rehabplus.ui.screens.LoginScreen // Commented out due to errors with MSAL.
-import com.charliedovey.rehabplus.ui.screens.HomeScreen
-import com.charliedovey.rehabplus.ui.screens.ProgramScreen
+//import com.charliedovey.rehabplus.ui.screens.LoginScreen // Commented out due to errors with MSAL.
+//import com.charliedovey.rehabplus.ui.screens.HomeScreen
+//import com.charliedovey.rehabplus.ui.screens.ProgramScreen
 import com.charliedovey.rehabplus.ui.theme.RehabPlusTheme
 import com.charliedovey.rehabplus.navigation.AppNavigationGraph // Import the navigation graph composable function.
+import com.charliedovey.rehabplus.ui.screens.UserListScreen
 
 /**
  * MainActivity is the entry point of the app.

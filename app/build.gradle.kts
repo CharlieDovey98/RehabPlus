@@ -10,11 +10,10 @@ android {
 
     defaultConfig {
         applicationId = "com.charliedovey.rehabplus"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -37,10 +36,16 @@ android {
     buildFeatures {
         compose = true
     }
+    packaging {
+        resources {
+            excludes += "META-INF/INDEX.LIST"
+            excludes += "META-INF/DEPENDENCIES"
+            excludes += "META-INF/io.netty.versions.properties"
+        }
+    }
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -60,8 +65,15 @@ dependencies {
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.coil.compose)
     implementation(libs.androidx.media3.ui)
+    implementation(libs.azure.cosmos)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.converter.moshi)
+    implementation(libs.logging.interceptor)
+    implementation("com.squareup.moshi:moshi-kotlin:1.15.0")
+    implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
     implementation("com.microsoft.identity.client:msal:2.0.10") {
         exclude(group = "com.microsoft.device.display", module = "display-mask")
     }
-
 }

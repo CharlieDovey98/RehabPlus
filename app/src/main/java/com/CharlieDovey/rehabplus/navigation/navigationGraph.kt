@@ -36,6 +36,12 @@ fun AppNavigationGraph(
             )
         }
 
+        // User list screen, temporary view of users from azure cosmos db.
+        // TODO: change for physiotherapist program and exercise selecting.
+        composable("userList") {
+            UserListScreen()
+        }
+
         // Exercise detail screen route.
         composable("exercise/{exerciseId}") { backStackEntry ->
             // Extract the exerciseId from the navigation arguments.
