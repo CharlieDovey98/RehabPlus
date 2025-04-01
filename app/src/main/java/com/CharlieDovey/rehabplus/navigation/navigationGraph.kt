@@ -22,7 +22,7 @@ fun AppNavigationGraph(
 ) {
     // NavHost is the container that manages navigation between Composable screens.
     // The start destination is set to program for testing.
-    NavHost(navController = navController, startDestination = "settings") {
+    NavHost(navController = navController, startDestination = "progress") {
 
         // Program screen route.
         composable("program") {
@@ -62,6 +62,11 @@ fun AppNavigationGraph(
                     navController.popBackStack()
                 }
             )
+        }
+
+        // User Progress screen for users to view their adherence by week and view the badges they have attained.
+        composable("progress") {
+            ProgressScreen()
         }
 
         // User Settings screen for users to attain information and change settings within the app.

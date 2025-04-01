@@ -72,6 +72,7 @@ dependencies {
     implementation(libs.converter.moshi)
     implementation(libs.logging.interceptor)
     implementation("com.squareup.moshi:moshi-kotlin:1.15.0")
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
     implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
     implementation("com.microsoft.identity.client:msal:2.0.10") {
         exclude(group = "com.microsoft.device.display", module = "display-mask")
