@@ -26,7 +26,7 @@ fun HomeScreen(username: String = "User") {
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
-            .padding(horizontal = 16.dp, vertical = 45.dp)
+            .padding(horizontal = 16.dp, vertical = 10.dp)
     ) {
         // Greeting dashboard title.
         Text(

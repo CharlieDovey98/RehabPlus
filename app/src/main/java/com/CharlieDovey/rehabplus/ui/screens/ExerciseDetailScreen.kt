@@ -32,7 +32,7 @@ fun ExerciseDetailScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp, vertical = 45.dp)
+            .padding(horizontal = 16.dp, vertical = 10.dp)
     ) {
         // Back button and Program Name.
         Row(

@@ -43,7 +43,7 @@ fun ProgramScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp, vertical = 45.dp)
+            .padding(horizontal = 16.dp, vertical = 10.dp)
     ) {
         // Program title.
         Text(

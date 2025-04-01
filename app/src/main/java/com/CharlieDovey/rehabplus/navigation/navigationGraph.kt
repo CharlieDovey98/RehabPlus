@@ -22,7 +22,12 @@ fun AppNavigationGraph(
 ) {
     // NavHost is the container that manages navigation between Composable screens.
     // The start destination is set to program for testing.
-    NavHost(navController = navController, startDestination = "progress") {
+    NavHost(navController = navController, startDestination = "home") {
+
+        // User Home screen.
+        composable("home") {
+            HomeScreen()
+        }
 
         // Program screen route.
         composable("program") {

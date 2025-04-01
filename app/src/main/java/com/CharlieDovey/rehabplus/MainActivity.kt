@@ -14,8 +14,7 @@ import com.charliedovey.rehabplus.model.Program
 //import com.charliedovey.rehabplus.ui.screens.HomeScreen
 //import com.charliedovey.rehabplus.ui.screens.ProgramScreen
 import com.charliedovey.rehabplus.ui.theme.RehabPlusTheme
-import com.charliedovey.rehabplus.navigation.AppNavigationGraph // Import the navigation graph composable function.
-import com.charliedovey.rehabplus.ui.screens.UserListScreen
+import com.charliedovey.rehabplus.navigation.* // Import the navigation components.
 
 /**
  * MainActivity is the entry point of the app.
@@ -94,21 +93,20 @@ val exerciseMapBuild = dbExerciseList.associateBy { it.id }
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //AuthManager.init(applicationContext) {} // Initialises MSAL with the application context.
 
         enableEdgeToEdge() // Enables full use of the phone screen.
         setContent { // Set the main UI content of the app.
             val navigationController = rememberNavController() // Create the navigation controller.
+
             RehabPlusTheme { // Apply the RehabPlus theme.
-                AppNavigationGraph( // Launch the navigation system with a dummy program.
+                RootNavigation( // Launch the navigation system with a dummy program.
                     navController = navigationController,
                     program = sampleProgram,
                     exerciseMap = exerciseMapBuild
                 )
-                //HomeScreen(username = "Charlie")
-                //LoginScreen() // [errors] Show the LoginScreen as the app's first screen.
             }
-        }
-        AuthManager.init(applicationContext) { // Initialises MSAL with the application context.
         }
     }
 }
+

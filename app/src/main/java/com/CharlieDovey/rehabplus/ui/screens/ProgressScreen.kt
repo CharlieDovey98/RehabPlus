@@ -49,7 +49,7 @@ fun ProgressScreen() {
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp, vertical = 45.dp)
+            .padding(horizontal = 16.dp, vertical = 10.dp)
     ) {
 
         Text(
