@@ -38,7 +38,7 @@ val dbExerciseList = listOf(
         "Lift hips off the ground into a bridge position.",
         "Lie on your back with your knees bent and feet flat on the floor. Engage your glutes and lift your hips upwards, creating a straight line from your shoulders to your knees. Hold briefly, then slowly lower your hips back to the ground in a controlled motion.",
         "https://rehabplusmedia.blob.core.windows.net/videos/Bridging-Exercise.mp4",
-"https://rehabplusmedia.blob.core.windows.net/images/Bridging-Exercise.png"
+        "https://rehabplusmedia.blob.core.windows.net/images/Bridging-Exercise.png"
     ),
     Exercise(
         "3",
@@ -63,8 +63,7 @@ val dbExerciseList = listOf(
         "Begin in a kneeling lunge position with one foot forward and the other knee on the ground. Shift your weight forward slightly, keeping your torso upright, until you feel a stretch in the front of your hip on the kneeling leg. Hold the stretch and switch sides.",
         "https://rehabplusmedia.blob.core.windows.net/videos/Hip-Flexor-Stretch.mp4",
         "https://rehabplusmedia.blob.core.windows.net/images/Hip-Flexor-Stretch.png"
-    )
-    ,
+    ),
     Exercise(
         "6",
         "Knee to Chest Stretch",
@@ -94,21 +93,21 @@ val exerciseMapBuild = dbExerciseList.associateBy { it.id }
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        enableEdgeToEdge() // Enables full use of the phone screen.
-        setContent { // Set the main UI content of the app.
-            val navigationController = rememberNavController() // Create the navigation controller.
-            RehabPlusTheme { // Apply the RehabPlus theme.
-                AppNavigationGraph( // Launch the navigation system with a dummy program.
-                    navController = navigationController,
-                    program = sampleProgram,
-                    exerciseMap = exerciseMapBuild
-                )
-                //HomeScreen(username = "Charlie")
-                //LoginScreen() // [errors] Show the LoginScreen as the app's first screen.
-            }
-        }
         AuthManager.init(applicationContext) { // Initialises MSAL with the application context.
+            enableEdgeToEdge() // Enables full use of the phone screen.
+            setContent { // Set the main UI content of the app.
+                val navigationController =
+                    rememberNavController() // Create the navigation controller.
+                RehabPlusTheme { // Apply the RehabPlus theme.
+                    AppNavigationGraph( // Launch the navigation system with a dummy program.
+                        navController = navigationController,
+                        program = sampleProgram,
+                        exerciseMap = exerciseMapBuild
+                    )
+                    //HomeScreen(username = "Charlie")
+                    //LoginScreen() // [errors] Show the LoginScreen as the app's first screen.
+                }
+            }
         }
     }
 }

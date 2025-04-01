@@ -1,12 +1,12 @@
 {
-  "client_id": "a224162e-3169-4f0d-b963-24e3f6c02f2f",
+  "client_id": "663775da-624e-4697-b43b-ad0f5d17e5e9",
   "authorization_user_agent": "DEFAULT",
-  "redirect_uri": "msala224162e-3169-4f0d-b963-24e3f6c02f2f://auth",
+  "redirect_uri": "msauth://com.charliedovey.rehabplus/WNca54PtiS5F%2BX%2Bs2dzElqPQzaI%3D",
   "account_mode": "SINGLE",
   "authorities": [
     {
       "type": "B2C",
-      "authority_url": "https://rehabplusadb2c.b2clogin.com/rehabplusadb2c.onmicrosoft.com/B2C_1_signupsignin",
+      "authority_url": "https://rehabplusad.b2clogin.com/rehabplusad.onmicrosoft.com/B2C_1_signupsignin",
       "default": true
     }
   ]

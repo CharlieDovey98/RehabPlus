@@ -16,39 +16,32 @@
         android:theme="@style/Theme.RehabPlus"
         tools:targetApi="31">
 
-        <!-- Main Activity -->
+        <!-- Main app entry point -->
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|screenSize"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.RehabPlus">
+            <!-- This is the launcher intent filter -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data
-                    android:scheme="msala224162e-3169-4f0d-b963-24e3f6c02f2f"
-                    android:host="auth" />
-            </intent-filter>
         </activity>
 
         <!-- MSAL Required Activity -->
-        <activity android:name="com.microsoft.identity.client.BrowserTabActivity"
+        <activity
+            android:name="com.microsoft.identity.client.BrowserTabActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
-                    android:host="auth"
-                    android:path="/"
-                    android:scheme="msala224162e-3169-4f0d-b963-24e3f6c02f2f" />
+                    android:scheme="msauth"
+                    android:host="com.charliedovey.rehabplus"
+                    android:path="/WNca54PtiS5F+X+s2dzElqPQzaI=" />
             </intent-filter>
         </activity>
 

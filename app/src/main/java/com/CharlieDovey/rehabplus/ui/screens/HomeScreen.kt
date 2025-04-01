@@ -17,7 +17,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-
+// Project Imports.
+import com.charliedovey.rehabplus.model.Program
 
 @Composable
 fun HomeScreen(username: String = "User") {
