@@ -22,11 +22,23 @@ fun AppNavigationGraph(
 ) {
     // NavHost is the container that manages navigation between Composable screens.
     // The start destination is set to program for testing.
-    NavHost(navController = navController, startDestination = "home") {
+    NavHost(navController = navController, startDestination = "login") {
 
-        // User Home screen.
-        composable("home") {
-            HomeScreen()
+        // Login screen route.
+        composable("login") {
+            LoginScreen(
+                onLoginSuccess = { user ->
+                    navController.navigate("home/${user?.name ?: "User"}") {
+                        popUpTo("login") { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        // Home screen route.
+        composable("home/{username}") { backStackEntry ->
+            val username = backStackEntry.arguments?.getString("username") ?: "User"
+            HomeScreen(username = username)
         }
 
         // Program screen route.

@@ -2,7 +2,8 @@ package com.charliedovey.rehabplus.ui.screens
 
 // Importing necessary libraries for Android and Jetpack Compose.
 import android.app.Activity
-import android.widget.Toast // Toast non intrusive, temporary popup messages.
+// Toast non intrusive, temporary popup messages.
+import android.widget.Toast
 
 // Jetpack Compose UI elements
 import androidx.compose.foundation.layout.*
@@ -14,6 +15,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 // Project imports.
 import com.charliedovey.rehabplus.AuthManager // Import AuthManager object.
+import com.charliedovey.rehabplus.model.User
 
 /**
  * LoginScreen handles user log in using composable.
@@ -22,7 +24,7 @@ import com.charliedovey.rehabplus.AuthManager // Import AuthManager object.
 
 // A @Composable function from Jetpack Compose UI.
 @Composable
-fun LoginScreen() {
+fun LoginScreen(onLoginSuccess: (User) -> Unit) { // Callback to run the function when login has been achieved.
     val context = LocalContext.current
     val activity = context as? Activity
 
@@ -39,7 +41,6 @@ fun LoginScreen() {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
             Text("Welcome to RehabPlus", style = MaterialTheme.typography.headlineMedium)
-
             Spacer(modifier = Modifier.height(32.dp))
 
             // Sign In button.
@@ -50,30 +51,30 @@ fun LoginScreen() {
                         isLoading = true // Disable button and show its loading.
 
                         // Call AuthManager to begin login process.
-                        AuthManager.signIn(activity) { account ->
+                        AuthManager.signIn(activity) { user ->
                             isLoading = false
                             // If sign in is successful.
-                            if (account != null) {
+                            if (user != null) {
                                 // Show success message and username.
                                 Toast.makeText(
                                     context,
-                                    "Welcome, ${account.username}",
+                                    "Welcome, ${user.name}",
                                     Toast.LENGTH_LONG
                                 ).show()
 
-                                // TODO: You can navigate to the next screen.
+                                onLoginSuccess(user) // Pass user to NavGraph to show on the Homescreen.
                             } else {
                                 // Else show failed message if sign in failed.
                                 Toast.makeText(
                                     context,
-                                    "Sign-in failed",
+                                    "Sign-in failed. Please try again.",
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }
                         }
                     }
                 },
-                enabled = !isLoading // Disable button if its loading.
+                enabled = !isLoading // Disable the button if its loading.
             ) {
                 Text(if (isLoading) "Signing in... Please wait" else "Sign In") // Change button text with loading state.
             }
