@@ -2,12 +2,14 @@
   "client_id": "0c17a826-a9b8-4cfd-a3d9-97a51603f183",
   "authorization_user_agent": "DEFAULT",
   "redirect_uri": "msauth://com.charliedovey.rehabplus/WNca54PtiS5F%2BX%2Bs2dzElqPQzaI%3D",
-  "account_mode": "SINGLE",
+  "account_mode": "MULTIPLE",
+  "broker_redirect_uri_registered": false,
   "authorities": [
     {
       "type": "B2C",
       "authority_url": "https://rehabplusad.b2clogin.com/rehabplusad.onmicrosoft.com/B2C_1_signupsignin",
       "default": true
     }
+
   ]
 }

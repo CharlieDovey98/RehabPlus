@@ -15,6 +15,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 // Project imports.
 import com.charliedovey.rehabplus.AuthManager // Import AuthManager object.
+import com.charliedovey.rehabplus.model.User
 
 /**
  * LoginScreen handles user log in using composable.
@@ -23,7 +24,7 @@ import com.charliedovey.rehabplus.AuthManager // Import AuthManager object.
 
 // A @Composable function from Jetpack Compose UI.
 @Composable
-fun LoginScreen(onLoginSuccess: (String) -> Unit) { // Callback to run the function when login has been achieved.
+fun LoginScreen(onLoginSuccess: (User) -> Unit) { // Callback to run the function when login has been achieved.
     val context = LocalContext.current
     val activity = context as? Activity
 
@@ -50,18 +51,18 @@ fun LoginScreen(onLoginSuccess: (String) -> Unit) { // Callback to run the funct
                         isLoading = true // Disable button and show its loading.
 
                         // Call AuthManager to begin login process.
-                        AuthManager.signIn(activity) { account ->
+                        AuthManager.signIn(activity) { user ->
                             isLoading = false
                             // If sign in is successful.
-                            if (account != null) {
+                            if (user != null) {
                                 // Show success message and username.
                                 Toast.makeText(
                                     context,
-                                    "Welcome, ${account.username}",
+                                    "Welcome, ${user.name}",
                                     Toast.LENGTH_LONG
                                 ).show()
 
-                                onLoginSuccess(account.username) // Pass username to NavGraph to show on the Homescreen.
+                                onLoginSuccess(user) // Pass user to NavGraph to show on the Homescreen.
                             } else {
                                 // Else show failed message if sign in failed.
                                 Toast.makeText(

@@ -27,9 +27,9 @@ fun AppNavigationGraph(
         // Login screen route.
         composable("login") {
             LoginScreen(
-                onLoginSuccess = { username ->
-                    navController.navigate("home/$username") { // Navigate to the home screen on successful login.
-                        popUpTo("login") { inclusive = true } // Prevent navigation back to login.
+                onLoginSuccess = { user ->
+                    navController.navigate("home/${user?.name ?: "User"}") {
+                        popUpTo("login") { inclusive = true }
                     }
                 }
             )

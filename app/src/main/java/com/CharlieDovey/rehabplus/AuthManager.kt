@@ -1,43 +1,52 @@
 package com.charliedovey.rehabplus
 
-// Import necessary libraries for Android and MSAL.
+// Import necessary libraries for MSAL and Android.
 import android.app.Activity
 import android.content.Context
+import android.util.Base64
 import android.util.Log
-import com.microsoft.identity.client.* // Microsoft Authentication Library (MSAL).
+import com.microsoft.identity.client.*
 import com.microsoft.identity.client.exception.MsalDeclinedScopeException
 import com.microsoft.identity.client.exception.MsalException
+import org.json.JSONObject
+// Project imports.
+import com.charliedovey.rehabplus.model.User
 
 /**
- * AuthManager handles user authentication using MSAL.
- * This class takes care of initialising MSAL and launching the sign-in screen, handling the result.
+ * AuthManager handles MSAL authentication logic for the RehabPlus app.
+ * This file uses Multiple Account mode with Azure AD B2C to sign in and decode user data for RehabPlus.
  */
+
 object AuthManager {
-    // MSAL application object for single user use.
-    private var msalApp: ISingleAccountPublicClientApplication? = null
+    private var msalApp: IMultipleAccountPublicClientApplication? = null
 
-    // Initialises the MSAL application using msal_config.json.
+    // B2C user flow policy name in use.
+    private const val B2C_POLICY = "B2C_1_signupsignin" // B2C_1_SignIn
+
+    private val SCOPES = listOf( // Custom user_access scope.
+        "https://rehabplusad.onmicrosoft.com/0c17a826-a9b8-4cfd-a3d9-97a51603f183/user_access"
+    ) // Removed openid and offline_access due to errors with the scopes.
+
+    // Initialise the MSAL library in multiple account mode.
     fun init(context: Context, onReady: () -> Unit) {
-        Log.d("AuthManager", "init() called")
+        Log.d("AuthManager", "Initialising MSAL")
 
-        // Enable MSAL logs for debugging.
         Logger.getInstance().apply {
             setLogLevel(Logger.LogLevel.VERBOSE)
             setEnableLogcatLog(true)
         }
-        // Create MSAL client from msal_config.
-        PublicClientApplication.createSingleAccountPublicClientApplication(
-            context,
-            R.raw.msal_config,
-            object : IPublicClientApplication.ISingleAccountApplicationCreatedListener {
 
-                // Called when the MSAL app is created successfully.
-                override fun onCreated(application: ISingleAccountPublicClientApplication) {
+        // Initialise MSAL in multiple-account mode.
+        PublicClientApplication.createMultipleAccountPublicClientApplication(
+            context,
+            R.raw.msal_config, // Use the msal_config.json file for necessary configuration.
+            object : IPublicClientApplication.IMultipleAccountApplicationCreatedListener {
+                override fun onCreated(application: IMultipleAccountPublicClientApplication) {
                     Log.d("AuthManager", "MSAL initialised successfully")
                     msalApp = application
-                    onReady() // Callback function to say MSAL is ready.
+                    onReady()
                 }
-                // Called if MSAL creation fails.
+                // onError function needed for debugging.
                 override fun onError(exception: MsalException) {
                     Log.e("AuthManager", "MSAL init failed: ${exception.message}")
                     exception.printStackTrace()
@@ -46,112 +55,118 @@ object AuthManager {
         )
     }
 
-    // Function to start the sign in flow of the user using Azure AD B2C.
-    fun signIn(activity: Activity, callback: (IAccount?) -> Unit) {
-        Log.d("AuthManager", "signIn() called")
+    // Function to call interactive sign in and return  a populated User object.
+    fun signIn(activity: Activity, callback: (User?) -> Unit) {
         val app = msalApp
-        // A check to see if MSAL was initialised.
         if (app == null) {
-            Log.e("AuthManager", "MSAL app not initialised")
+            Log.e("AuthManager", "MSAL not initialised")
             callback(null)
             return
         }
 
-        // A Check to see if a user is already signed in before calling signOut.
-        app.getCurrentAccountAsync(object : ISingleAccountPublicClientApplication.CurrentAccountCallback {
-            // Function to check if there is an active account.
-            override fun onAccountLoaded(activeAccount: IAccount?) {
-                // If there is an active account, sign out first to restart the process.
-                if (activeAccount != null) {
-                    Log.d("AuthManager", "Already signed in. Proceeding to sign out first.")
-                    app.signOut(object : ISingleAccountPublicClientApplication.SignOutCallback {
-                        // Function to call the the user to sign in after a successful sign out.
-                        override fun onSignOut() {
-                            Log.d("AuthManager", "Signed out for fresh sign-in")
-                            startInteractiveSignIn(app, activity, callback)
-                        }
-                        // Function to log an error that has occurred during sign out.
-                        override fun onError(e: MsalException) {
-                            Log.e("AuthManager", "Error signing out: ${e.message}")
-                            callback(null)
-                        }
-                    })
-                } else { // Else no active account, call the user to sign in.
-                    startInteractiveSignIn(app, activity, callback)
+        // Debug and clear any signed in users.
+        app.getAccounts(object : IPublicClientApplication.LoadAccountsCallback {
+            override fun onTaskCompleted(accounts: List<IAccount>) {
+                if (accounts.isNotEmpty()) {
+                    for (account in accounts) {
+                        app.removeAccount(account)
+                    }
                 }
+                Log.d("AuthManager", "Launching interactive sign-in with policy: $B2C_POLICY")
+
+                // Acquire token with B2C authority and scopes list.
+                app.acquireToken(
+                    AcquireTokenParameters.Builder()
+                        .startAuthorizationFromActivity(activity)
+                        .withScopes(SCOPES)
+                        .fromAuthority("https://rehabplusad.b2clogin.com/tfp/rehabplusad.onmicrosoft.com/$B2C_POLICY")
+                        .withCallback(getAuthCallback(callback))
+                        .build()
+                )
             }
 
-            // Not used but required to be present by the interface.
-            override fun onAccountChanged(priorAccount: IAccount?, currentAccount: IAccount?) {
-            }
-
-            // Function to log an error that occurred trying to load current account.
+            // Error function with logging for debugging.
             override fun onError(exception: MsalException) {
-                Log.e("AuthManager", "Error checking existing account: ${exception.message}")
+                Log.e("AuthManager", "Error loading accounts: ${exception.message}")
                 callback(null)
             }
         })
     }
 
-    // Function to start interactive sign in.
-    private fun startInteractiveSignIn(app: ISingleAccountPublicClientApplication, activity: Activity, callback: (IAccount?) -> Unit) {
-        app.acquireToken(
-            AcquireTokenParameters.Builder()
-                .startAuthorizationFromActivity(activity)
-                .withScopes(
-                    listOf(
-                        "https://rehabplusad.onmicrosoft.com/rehabplus-api/user_access", // RehabPlus custom API scope.
-                        "openid", // ID token scope, currently causing errors.
-                        "offline_access" // Refresh token scope, currently causing errors.
-                    )
-                )
-                .withCallback(object : AuthenticationCallback {
-                    // function called when MSAL Authentication succeeds.
-                    override fun onSuccess(authenticationResult: IAuthenticationResult) {
-                        val account = authenticationResult.account
-                        val idToken = authenticationResult.accessToken
+    // Callback function used when MSAL login finishes.
+    private fun getAuthCallback(callback: (User?) -> Unit): AuthenticationCallback {
+        return object : AuthenticationCallback {
+            // Authentication success function to build the user object from the received token.
+            override fun onSuccess(result: IAuthenticationResult) {
+                Log.d("AuthManager", "Login success")
 
-                        Log.d("AuthManager", "Account username: ${account.username}") // Currently returning null.
-                        Log.d("AuthManager", "ID Token: $idToken") // Currently returning null.
+                val parts = result.accessToken.split(".")
+                var user: User? = null
 
-                        // Attempts to decode the ID token payload for debugging. currently returning null.
-                        val parts = idToken.split(".")
-                        if (parts.size == 3) {
-                            try {
-                                val payload = android.util.Base64.decode(parts[1], android.util.Base64.URL_SAFE or android.util.Base64.NO_PADDING or android.util.Base64.NO_WRAP)
-                                val json = String(payload, Charsets.UTF_8)
-                                Log.d("AuthManager", "Decoded ID Token payload: $json")
-                            } catch (e: Exception) {
-                                Log.e("AuthManager", "Failed to decode ID token: ${e.message}")
-                            }
-                        }
+                if (parts.size == 3) {
+                    try {
+                        val decoded = Base64.decode(parts[1], Base64.URL_SAFE or Base64.NO_WRAP)
+                        val json = JSONObject(String(decoded, Charsets.UTF_8))
 
-                        callback(account)
+                        // Extract wanted fields using the assigned claim names.
+                        val givenName = json.optString("given_name", "")
+                        val familyName = json.optString("family_name", "")
+                        val fullName = "$givenName $familyName".trim()
+                        val email = json.optJSONArray("emails")?.optString(0) ?: ""
+                        val id = json.optString("oid", "")
+
+                        Log.d("AuthManager", "User: $id $fullName $email $givenName $familyName")
+
+                        // Build the user object from the fields above.
+                        user = User(
+                            id = id,
+                            name = fullName,
+                            email = email,
+                            completedQuestionnaire = false,
+                            assignedProgramIds = emptyList(),
+                            earnedBadgeIds = emptyList()
+                        )
+
+                    } catch (e: Exception) {
+                        Log.e("AuthManager", "Error decoding token: ${e.message}")
                     }
+                }
+                callback(user)
+            }
 
-                    // Function called if authentication fails.
-                    override fun onError(exception: MsalException) {
-                        Log.e("AuthManager", "Authentication error")
+            // onError function to log the authentication error and declined scopes for debugging.
+            override fun onError(e: MsalException) {
+                Log.e("AuthManager", "Authentication failed: ${e.message}")
+                if (e is MsalDeclinedScopeException) {
+                    Log.e("AuthManager", "Declined scopes: ${e.declinedScopes?.joinToString()}")
+                }
+                callback(null)
+            }
 
-                        // Check to see if some scopes were declined by the user or system.
-                        // Currently returning openid and offline_access.
-                        if (exception is MsalDeclinedScopeException) {
-                            val declined = exception.declinedScopes?.joinToString()
-                            Log.e("AuthManager", "Declined scopes: $declined")
-                        }
+            // onCancel function to handle the user cancelling the sign in process.
+            override fun onCancel() {
+                Log.w("AuthManager", "User cancelled sign-in")
+                callback(null)
+            }
+        }
+    }
 
-                        Log.e("AuthManager", exception.message ?: "No error message")
-                        exception.printStackTrace()
-                        callback(null)
-                    }
+    // signOut function which signs the user out and clears stored account info.
+    fun signOut(callback: () -> Unit) {
+        val app = msalApp ?: return callback()
 
-                    // Function called if user cancels the sign in process.
-                    override fun onCancel() {
-                        Log.w("AuthManager", "User cancelled sign-in")
-                        callback(null)
-                    }
-                })
-                .build()
-        )
+        app.getAccounts(object : IPublicClientApplication.LoadAccountsCallback {
+            override fun onTaskCompleted(accounts: List<IAccount>) {
+                for (account in accounts) {
+                    app.removeAccount(account)
+                }
+                callback()
+            }
+
+            override fun onError(exception: MsalException) {
+                Log.e("AuthManager", "Error signing out: ${exception.message}")
+                callback()
+            }
+        })
     }
 }
