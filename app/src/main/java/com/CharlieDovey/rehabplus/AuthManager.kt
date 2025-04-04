@@ -9,8 +9,11 @@ import com.microsoft.identity.client.*
 import com.microsoft.identity.client.exception.MsalDeclinedScopeException
 import com.microsoft.identity.client.exception.MsalException
 import org.json.JSONObject
+import kotlinx.coroutines.*
 // Project imports.
 import com.charliedovey.rehabplus.model.User
+import com.charliedovey.rehabplus.data.RetrofitInstance
+
 
 /**
  * AuthManager handles MSAL authentication logic for the RehabPlus app.
@@ -98,15 +101,19 @@ object AuthManager {
     // Callback function used when MSAL login finishes.
     private fun getAuthCallback(callback: (User?) -> Unit): AuthenticationCallback {
         return object : AuthenticationCallback {
-            // Authentication success function to build the user object from the received token.
+
+            // Authentication success function to build the user object from the received token and find or create a new user to store in the Cosmos DB.
             override fun onSuccess(result: IAuthenticationResult) {
                 Log.d("AuthManager", "Login success")
 
+                // Split the access token into 3 parts by '.' for header, payload and signature.
                 val parts = result.accessToken.split(".")
                 var user: User? = null
 
+                // Ensure the token is in the expected format, split from above.
                 if (parts.size == 3) {
                     try {
+                        // Decode the payload which contains user info needed for RehabPlus.
                         val decoded = Base64.decode(parts[1], Base64.URL_SAFE or Base64.NO_WRAP)
                         val json = JSONObject(String(decoded, Charsets.UTF_8))
 
@@ -117,9 +124,9 @@ object AuthManager {
                         val email = json.optJSONArray("emails")?.optString(0) ?: ""
                         val id = json.optString("oid", "")
 
-                        Log.d("AuthManager", "User: $id $fullName $email $givenName $familyName")
+                        Log.d("AuthManager", "Decoded User: $id $fullName $email")
 
-                        // Build the user object from the fields above.
+                        // Build the user object from the fields above and other needed fields.
                         user = User(
                             id = id,
                             name = fullName,
@@ -133,7 +140,55 @@ object AuthManager {
                         Log.e("AuthManager", "Error decoding token: ${e.message}")
                     }
                 }
-                callback(user)
+
+                // If decoding fails exit with null.
+                if (user == null) {
+                    Log.e("AuthManager", "Failed to decode user from token")
+                    callback(null)
+                    return
+                }
+
+                // Use coroutine to contact the Azure backend asynchronously, off the main thread.
+                CoroutineScope(Dispatchers.IO).launch {
+                    try {
+                        val api = RetrofitInstance.api // Access the Azure Function API via Retrofit.
+
+                        // Try to fetch the user by email from Cosmos DB.
+                        val existingUser = try {
+                            api.getUserByEmail(user.email)
+                        } catch (e: retrofit2.HttpException) {
+                            // If error code 404 is received, a new user needs to be created.
+                            if (e.code() == 404) {
+                                Log.w("AuthManager","User not found, creating a new user to store in the database.")
+                                null
+                            } else {
+                                throw e // If any other error is received, throw it to outer onError function.
+                            }
+                        }
+
+                        // Use existing user if found, otherwise create a new user and add to the database.
+                        val completedUser = if (existingUser != null) {
+                            Log.d("AuthManager", "User exists in database: ${existingUser.email}")
+                            existingUser
+                        } else {
+                            Log.d("AuthManager", "Creating user and adding them to the database.")
+                            api.createUser(user)
+                        }
+
+                        // Return completedUser back to the UI main thread after completion.
+                        withContext(Dispatchers.Main) {
+                            callback(completedUser)
+                        }
+
+                    } catch (e: Exception) {
+                        // Catch any errors and log them for debugging.
+                        Log.e("AuthManager", "Failed to query/create user: ${e.message}")
+                        withContext(Dispatchers.Main) {
+                            callback(user) /// Return the payload decoded user back to the UI main thread after completion to prevent app crashing.
+                        }
+                    }
+                }
+
             }
 
             // onError function to log the authentication error and declined scopes for debugging.
@@ -152,6 +207,7 @@ object AuthManager {
             }
         }
     }
+
 
     // signOut function which signs the user out and clears stored account info.
     fun signOut(callback: () -> Unit) {
