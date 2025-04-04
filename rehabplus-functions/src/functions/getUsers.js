@@ -40,7 +40,7 @@ app.http('getUsers', {
 
       // Return the users as a JSON response with status 200.
       return {
-        status: 200,
+        status: 200, // Server request completed status.
         jsonBody: users
       };
     } 
@@ -48,7 +48,7 @@ app.http('getUsers', {
     catch (err) {
       context.log.error("Error when querying Cosmos DB:", err.message);
       return {
-        status: 500,
+        status: 500, // Internal server error status.
         jsonBody: { error: "Failed to fetch users from Cosmos DB" }
       };
     }
