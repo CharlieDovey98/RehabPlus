@@ -2,12 +2,14 @@ package com.charliedovey.rehabplus.navigation
 
 // Import necessary libraries for Jetpack Compose and Android Navigation.
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 // Project imports.
 import com.charliedovey.rehabplus.model.*
 import com.charliedovey.rehabplus.ui.screens.*
+import com.charliedovey.rehabplus.viewmodel.UserViewModel
 
 /**
  * navigationGraph defines the navigation between screens of the app.
@@ -17,6 +19,7 @@ import com.charliedovey.rehabplus.ui.screens.*
 @Composable
 fun AppNavigationGraph(
     navController: NavHostController,
+    userViewModel: UserViewModel,
     program: Program,
     exerciseMap: Map<String, Exercise>
 ) {
@@ -27,8 +30,9 @@ fun AppNavigationGraph(
         // Login screen route.
         composable("login") {
             LoginScreen(
-                onLoginSuccess = { user ->
-                    navController.navigate("home/${user?.name ?: "User"}") {
+                userViewModel = userViewModel,
+                onLoginSuccess = {
+                    navController.navigate("home") {
                         popUpTo("login") { inclusive = true }
                     }
                 }
@@ -36,14 +40,14 @@ fun AppNavigationGraph(
         }
 
         // Home screen route.
-        composable("home/{username}") { backStackEntry ->
-            val username = backStackEntry.arguments?.getString("username") ?: "User"
-            HomeScreen(username = username)
+        composable("home") {
+            HomeScreen(userViewModel = userViewModel)
         }
 
         // Program screen route.
         composable("program") {
             ProgramScreen(
+                userViewModel = userViewModel,
                 program = program,
                 exerciseMap = exerciseMap,
                 onExerciseClick = { assigned ->
@@ -83,12 +87,14 @@ fun AppNavigationGraph(
 
         // User Progress screen for users to view their adherence by week and view the badges they have attained.
         composable("progress") {
-            ProgressScreen()
+            ProgressScreen(userViewModel = userViewModel)
         }
 
         // User Settings screen for users to attain information and change settings within the app.
         composable("settings") {
-            SettingsScreen()
+            SettingsScreen(
+                userViewModel = userViewModel,
+                navController = navController)
         }
 
     }

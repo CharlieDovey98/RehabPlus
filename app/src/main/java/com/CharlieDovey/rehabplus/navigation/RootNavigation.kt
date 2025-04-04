@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 // Project imports.
 import com.charliedovey.rehabplus.model.*
+import com.charliedovey.rehabplus.viewmodel.UserViewModel
 
 /**
  * RootNavigation is the top level layout for the app.
@@ -20,6 +21,7 @@ import com.charliedovey.rehabplus.model.*
 @Composable
 fun RootNavigation(
     navController: NavHostController,
+    userViewModel: UserViewModel,
     program: Program,
     exerciseMap: Map<String, Exercise>
 ) {
@@ -29,6 +31,7 @@ fun RootNavigation(
         Box(modifier = Modifier.padding(innerPadding)) {
             AppNavigationGraph(
                 navController = navController,
+                userViewModel = userViewModel,
                 program = program,
                 exerciseMap = exerciseMap
             )

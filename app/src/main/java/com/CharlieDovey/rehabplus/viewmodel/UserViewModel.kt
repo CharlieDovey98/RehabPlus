@@ -11,17 +11,20 @@ import com.charliedovey.rehabplus.data.RetrofitInstance
 import com.charliedovey.rehabplus.model.User
 
 /**
- * UserViewModel currently handles the retrieval and storage of user data from the Azure backend.
- * It fetches users from the cloud using Retrofit and stores them as a StateFlow for use in the UI.
+ * UserViewModel handles the storage of the current user accessing the app and
+ * retrieval of user data from the Azure backend.
+ * This file is for storing user data as a StateFlow for use in the UI.
  */
 
 class UserViewModel : ViewModel() {
 
     // Private mutable flow that holds the list of users.
-    // MutableStateFlow is data stream that the UI can observe.
-    private val _users = MutableStateFlow<List<User>>(emptyList())
-
+    private val _users = MutableStateFlow<List<User>>(emptyList()) // MutableStateFlow is data stream that the UI can observe.
     val users: StateFlow<List<User>> = _users // Public a read-only version of _users.
+
+    // The apps current signed in user.
+    private val _currentUser = MutableStateFlow<User?>(null)
+    val currentUser: StateFlow<User?> = _currentUser
 
     init { // Init is called when the ViewModel is first created, triggering the function to fetch user data from the cloud.
         fetchUsers()
@@ -37,5 +40,15 @@ class UserViewModel : ViewModel() {
                 e.printStackTrace()
             }
         }
+    }
+
+    // setCurrentUser function called to store the signed-in user.
+    fun setCurrentUser(user: User) {
+        _currentUser.value = user
+    }
+
+    // clearCurrentUser function to sign out the user from the app.
+    fun clearCurrentUser() {
+        _currentUser.value = null
     }
 }

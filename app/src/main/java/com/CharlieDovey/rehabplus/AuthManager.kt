@@ -46,6 +46,7 @@ object AuthManager {
                     msalApp = application
                     onReady()
                 }
+
                 // onError function needed for debugging.
                 override fun onError(exception: MsalException) {
                     Log.e("AuthManager", "MSAL init failed: ${exception.message}")
@@ -67,6 +68,7 @@ object AuthManager {
         // Debug and clear any signed in users.
         app.getAccounts(object : IPublicClientApplication.LoadAccountsCallback {
             override fun onTaskCompleted(accounts: List<IAccount>) {
+                Log.d("AuthManager", "Accounts before sign-in: ${accounts.size}")
                 if (accounts.isNotEmpty()) {
                     for (account in accounts) {
                         app.removeAccount(account)
@@ -153,20 +155,54 @@ object AuthManager {
 
     // signOut function which signs the user out and clears stored account info.
     fun signOut(callback: () -> Unit) {
-        val app = msalApp ?: return callback()
+        Log.d("AuthManager", "Sign out triggered")
+        val app = msalApp
+        if (app == null) { // If statement to check if MSAL was initialised.
+            Log.e("AuthManager", "MSAL not initialised.")
+            callback() // Callback to continue other sign out processes.
+            return // Exit the signOut function to prevent the app crashing or hanging.
+        }
 
-        app.getAccounts(object : IPublicClientApplication.LoadAccountsCallback {
+        app.getAccounts(object :
+            IPublicClientApplication.LoadAccountsCallback { // Retrieve the accounts from the MSAL application.
             override fun onTaskCompleted(accounts: List<IAccount>) {
-                for (account in accounts) {
-                    app.removeAccount(account)
+                if (accounts.isEmpty()) { // If there are no accounts, there is nothing to remove.
+                    Log.d("AuthManager", "No accounts found in MSAL that need to be removed.")
+                    callback()
+                    return
                 }
-                callback()
+
+                var remaining = accounts.size // Attain the number of accounts in MSAL.
+
+                for (account in accounts) { // For loop to remove all accounts within MSAl.
+                    app.removeAccount(
+                        account,
+                        object : IMultipleAccountPublicClientApplication.RemoveAccountCallback {
+                            override fun onRemoved() {
+                                Log.d("AuthManager", "Removed account: ${account.username}")
+                                remaining-- // Once the account is removed, reduce remaining by one.
+                                if (remaining == 0) { // If remaining is equal to zero, all accounts have been removed successfully.
+                                    Log.d("AuthManager", "All accounts removed successfully.")
+                                    callback()
+                                }
+                            }
+
+                            override fun onError(exception: MsalException) { // For errors removing accounts in MSAL, log the account error and reduce remaining.
+                                Log.e("AuthManager", "Error removing account: ${exception.message}")
+                                remaining--
+                                if (remaining == 0) {
+                                    callback()
+                                }
+                            }
+                        })
+                }
             }
 
             override fun onError(exception: MsalException) {
-                Log.e("AuthManager", "Error signing out: ${exception.message}")
+                Log.e("AuthManager", "Error getting accounts within MSAL: ${exception.message}")
                 callback()
             }
         })
     }
+
 }

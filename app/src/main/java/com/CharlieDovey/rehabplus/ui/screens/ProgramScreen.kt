@@ -27,6 +27,7 @@ import java.util.*
 import com.charliedovey.rehabplus.model.Exercise
 import com.charliedovey.rehabplus.model.Program
 import com.charliedovey.rehabplus.model.AssignedExercise
+import com.charliedovey.rehabplus.viewmodel.UserViewModel
 
 
 /**
@@ -36,6 +37,7 @@ import com.charliedovey.rehabplus.model.AssignedExercise
 
 @Composable
 fun ProgramScreen(
+    userViewModel: UserViewModel,
     program: Program,
     exerciseMap: Map<String, Exercise>,
     onExerciseClick: (AssignedExercise) -> Unit

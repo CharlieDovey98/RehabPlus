@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 // Project imports.
 import com.charliedovey.rehabplus.AuthManager // Import AuthManager object.
 import com.charliedovey.rehabplus.model.User
+import com.charliedovey.rehabplus.viewmodel.UserViewModel
 
 /**
  * LoginScreen handles user log in using composable.
@@ -24,11 +25,14 @@ import com.charliedovey.rehabplus.model.User
 
 // A @Composable function from Jetpack Compose UI.
 @Composable
-fun LoginScreen(onLoginSuccess: (User) -> Unit) { // Callback to run the function when login has been achieved.
-    val context = LocalContext.current
+fun LoginScreen(
+    userViewModel: UserViewModel,
+    onLoginSuccess: (User) -> Unit
+) { // Callback to run the function when login has been achieved.
+    val context = LocalContext.current // Access the current Android Context inside this loginScreen Composable.
     val activity = context as? Activity
 
-    // This state variable tracks if we're in the middle of a sign-in attempt
+    // This state variable tracks if the application is the middle of a sign in attempt.
     var isLoading by remember { mutableStateOf(false) }
 
     // Box ui component.
@@ -61,7 +65,7 @@ fun LoginScreen(onLoginSuccess: (User) -> Unit) { // Callback to run the functio
                                     "Welcome, ${user.name}",
                                     Toast.LENGTH_LONG
                                 ).show()
-
+                                userViewModel.setCurrentUser(user)
                                 onLoginSuccess(user) // Pass user to NavGraph to show on the Homescreen.
                             } else {
                                 // Else show failed message if sign in failed.

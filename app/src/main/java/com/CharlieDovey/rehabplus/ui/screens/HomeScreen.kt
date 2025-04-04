@@ -17,12 +17,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.runtime.collectAsState
 // Project Imports.
-import com.charliedovey.rehabplus.model.Program
+import com.charliedovey.rehabplus.viewmodel.UserViewModel
 
 @Composable
-fun HomeScreen(username: String = "User") {
+fun HomeScreen(userViewModel: UserViewModel) {
     val scrollState = rememberScrollState()
+    // Update on state change to get the currently logged in user from the ViewModel using StateFlow.
+    val user = userViewModel.currentUser.collectAsState().value
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -31,7 +35,7 @@ fun HomeScreen(username: String = "User") {
     ) {
         // Greeting dashboard title.
         Text(
-            text = "Hello $username", // Greeting message with the user's name.
+            text = "Hello ${user?.name ?: "User"}", // Greeting message with the user's name.
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold
         )

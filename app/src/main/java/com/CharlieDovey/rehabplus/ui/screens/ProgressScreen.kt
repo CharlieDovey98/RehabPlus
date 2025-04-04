@@ -25,6 +25,9 @@ import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
+// Project imports.
+import com.charliedovey.rehabplus.viewmodel.UserViewModel
+
 
 /**
  * Progress screen for the Rehab Plus app.
@@ -33,7 +36,7 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
  */
 
 @Composable
-fun ProgressScreen() {
+fun ProgressScreen(userViewModel: UserViewModel) {
     var weekIndex by remember { mutableIntStateOf(0) }
 
     // Simulated weekly data – each list represents 7 days of completion percentage.
