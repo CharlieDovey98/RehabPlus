@@ -2,7 +2,7 @@ package com.charliedovey.rehabplus.ui.screens
 
 // Importing necessary libraries for Android and Jetpack Compose.
 import android.app.Activity
-// Toast non intrusive, temporary popup messages.
+// Import Toast, non intrusive, temporary popup messages.
 import android.widget.Toast
 
 // Jetpack Compose UI elements
@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 // Project imports.
-import com.charliedovey.rehabplus.AuthManager // Import AuthManager object.
+import com.charliedovey.rehabplus.AuthManager
 import com.charliedovey.rehabplus.model.User
 import com.charliedovey.rehabplus.viewmodel.UserViewModel
 
@@ -27,7 +27,7 @@ import com.charliedovey.rehabplus.viewmodel.UserViewModel
 @Composable
 fun LoginScreen(
     userViewModel: UserViewModel,
-    onLoginSuccess: (User) -> Unit
+    onLoginSuccess: () -> Unit
 ) { // Callback to run the function when login has been achieved.
     val context = LocalContext.current // Access the current Android Context inside this loginScreen Composable.
     val activity = context as? Activity
@@ -55,18 +55,18 @@ fun LoginScreen(
                         isLoading = true // Disable button and show its loading.
 
                         // Call AuthManager to begin login process.
-                        AuthManager.signIn(activity) { user ->
+                        AuthManager.signIn(activity, userViewModel) { user ->
                             isLoading = false
                             // If sign in is successful.
                             if (user != null) {
-                                // Show success message and username.
+                                // Show success message and the users name.
                                 Toast.makeText(
                                     context,
                                     "Welcome, ${user.name}",
                                     Toast.LENGTH_LONG
                                 ).show()
-                                userViewModel.setCurrentUser(user)
-                                onLoginSuccess(user) // Pass user to NavGraph to show on the Homescreen.
+                                userViewModel.setCurrentUser(user) // set the userViewModels current user.
+                                onLoginSuccess() // Call the function to move to the Homescreen.
                             } else {
                                 // Else show failed message if sign in failed.
                                 Toast.makeText(

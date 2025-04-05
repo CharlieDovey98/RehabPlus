@@ -21,9 +21,7 @@ import com.charliedovey.rehabplus.viewmodel.UserViewModel
 @Composable
 fun RootNavigation(
     navController: NavHostController,
-    userViewModel: UserViewModel,
-    program: Program,
-    exerciseMap: Map<String, Exercise>
+    userViewModel: UserViewModel
 ) {
     Scaffold(  // Use Scaffolds fixed layout with the navigation bottom bar.
         bottomBar = { BottomNavigationBar(navController) }
@@ -31,9 +29,7 @@ fun RootNavigation(
         Box(modifier = Modifier.padding(innerPadding)) {
             AppNavigationGraph(
                 navController = navController,
-                userViewModel = userViewModel,
-                program = program,
-                exerciseMap = exerciseMap
+                userViewModel = userViewModel
             )
         }
     }

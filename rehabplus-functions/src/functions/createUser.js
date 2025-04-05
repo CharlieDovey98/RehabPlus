@@ -1,13 +1,12 @@
 /**
  * Azure Function /createUser.
- * This file connects to Azure Cosmos DB and creates a new user document in the users container
- * of the 'rehabplus-db' Cosmos DB database.
- * This function POSTS a user document to Cosmos DB based on the user object in RehabPlus.
+ * This function connects to RehabPlus Azure Cosmos DB
+ * and POSTS a new user document in the users container.
  */
 
 // Import the Azure functions and Cosmos DB.
-const { app } = require('@azure/functions');
-const { CosmosClient } = require('@azure/cosmos');
+const { app } = require("@azure/functions");
+const { CosmosClient } = require("@azure/cosmos");
 
 // Cosmos DB Endpoint and Primary Key credentials.
 const endpoint = process.env.COSMOS_DB_ENDPOINT;
@@ -20,18 +19,20 @@ const containerId = "users";
 const client = new CosmosClient({ endpoint, key });
 
 // createUser Azure HTTP POST Function.
-app.http('createUser', {
-  methods: ['POST'], // POST methos with anonymous authentication.
-  authLevel: 'anonymous',
+app.http("createUser", {
+  methods: ["POST"], // POST methos with anonymous authentication.
+  authLevel: "anonymous",
   handler: async (request, context) => {
-    context.log(`HTTP POST /createUser called in backend API`);
+    context.log(`POST /createUser called in backend API`);
 
-    try { // Try, catch statement to access the database and container.
+    try {
+      // Try, catch statement to access the database and container.
       const user = await request.json(); // Parse the request body as JSON.
       if (!user || !user.id || !user.email || !user.name) {
-        return { // If any user information is ommitted return error status 400.
+        return {
+          // If any user information is ommitted return error status 400.
           status: 400, // Client error status.
-          jsonBody: { error: 'Invalid or missing user data provided.' },
+          jsonBody: { error: "Invalid or missing user data provided." },
         };
       }
 
@@ -45,11 +46,12 @@ app.http('createUser', {
         status: 201, // Successful resource creation status.
         jsonBody: createdUser,
       };
-    } catch (err) { // If an error occurs, log the error and return 500.
-      context.log.error('Error creating user:', err.message);
+    } catch (err) {
+      // If an error occurs, log the error and return 500.
+      context.log.error("Error creating user:", err.message);
       return {
         status: 500, // Internal server error ststus.
-        jsonBody: { error: 'Failed to create user in Cosmos DB.' },
+        jsonBody: { error: "Failed to create user in Cosmos DB." },
       };
     }
   },

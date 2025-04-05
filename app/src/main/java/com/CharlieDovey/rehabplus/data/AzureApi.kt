@@ -6,7 +6,7 @@ import retrofit2.http.Query
 import retrofit2.http.Body
 import retrofit2.http.POST
 // Project import.
-import com.charliedovey.rehabplus.model.User
+import com.charliedovey.rehabplus.model.*
 
 
 /**
@@ -18,26 +18,26 @@ import com.charliedovey.rehabplus.model.User
 // Interface used by Retrofit to generate network code.
 interface AzureApi {
 
-    // This function performs a GET request to /getUsers.
+    // This function performs a GET request to /getUsers, returning a list of users in the database.
     @GET("getUsers")
     suspend fun getUsers(): List<User>
 
-    // This function performs a GET request to /getUserByEmail using a user email query.
+    // This function performs a GET request to /getUserByEmail using a user email query, returning a specific user.
     @GET("getUserByEmail")
     suspend fun getUserByEmail(@Query("email") email: String): User
 
-    //This function performs a POST method to /createUser using a body of user information.
+    //This function performs a POST method to /createUser using a body of user information, storing a user in the database.
     @POST("createUser")
     suspend fun createUser(@Body user: User): User
 
 
-    // This function performs a GET request to /getPrograms
-    // @GET("getPrograms")
-    // suspend fun getPrograms(): List<Program>
+    // This function performs a GET request to /getPrograms, returning a .
+    @GET("getProgramById")
+    suspend fun getProgramById(@Query("id") id: String): Program
 
     // This function performs a GET request to /getExercises
-    // @GET("getExercises")
-    // suspend fun getExercises(): List<Exercise>
+    @GET("getExercises")
+    suspend fun getExercises(): List<Exercise>
 
 
 }

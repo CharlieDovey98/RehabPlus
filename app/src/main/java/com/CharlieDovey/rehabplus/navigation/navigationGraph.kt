@@ -6,8 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 // Project imports.
-import com.charliedovey.rehabplus.model.*
 import com.charliedovey.rehabplus.ui.screens.*
 import com.charliedovey.rehabplus.viewmodel.UserViewModel
 
@@ -19,13 +20,17 @@ import com.charliedovey.rehabplus.viewmodel.UserViewModel
 @Composable
 fun AppNavigationGraph(
     navController: NavHostController,
-    userViewModel: UserViewModel,
-    program: Program,
-    exerciseMap: Map<String, Exercise>
+    userViewModel: UserViewModel
 ) {
+    // Attain the users assigned program from the userViewModel.
+    val program by userViewModel.assignedProgram.collectAsState()
+    val exerciseMap by userViewModel.exerciseMap.collectAsState()
+
     // NavHost is the container that manages navigation between Composable screens.
-    // The start destination is set to program for testing.
-    NavHost(navController = navController, startDestination = "login") {
+    NavHost(
+        navController = navController,
+        startDestination = "login"  // The start destination is set to login.
+    ) {
 
         // Login screen route.
         composable("login") {
@@ -41,14 +46,17 @@ fun AppNavigationGraph(
 
         // Home screen route.
         composable("home") {
-            HomeScreen(userViewModel = userViewModel)
+            HomeScreen(userViewModel = userViewModel,
+                onProgramClick = {
+                    // On click navigate to the users Program screen.
+                    navController.navigate("program")
+                })
         }
 
         // Program screen route.
         composable("program") {
             ProgramScreen(
                 userViewModel = userViewModel,
-                program = program,
                 exerciseMap = exerciseMap,
                 onExerciseClick = { assigned ->
                     // On click navigate to the exercise detail screen using the exercise ID.
@@ -57,29 +65,22 @@ fun AppNavigationGraph(
             )
         }
 
-        // User list screen, temporary view of users from azure cosmos db.
-        // TODO: change for physiotherapist program and exercise selecting.
-        composable("userList") {
-            UserListScreen()
-        }
-
         // Exercise detail screen route.
         composable("exercise/{exerciseId}") { backStackEntry ->
             // Extract the exerciseId from the navigation arguments.
             val exerciseId = backStackEntry.arguments?.getString("exerciseId") ?: return@composable
             // Find the assigned exercise in the current program using the ID.
-            val assigned = program.assignedExercises.find { it.exerciseId == exerciseId } ?: return@composable
+            val assigned = program?.assignedExercises?.find { it.exerciseId == exerciseId } ?: return@composable
             // Use the ID to get the full exercise object from the map.
             val exercise = exerciseMap[exerciseId] ?: return@composable
 
             // Show the ExerciseDetailScreen, passing the relevant data.
             ExerciseDetailScreen(
-                programName = program.name,
-                assigned = assigned,
+                programName = program!!.name, // Pass the program name as a non null assertion.
+                assigned = assigned, // Pass the assigned exercise with personalised values.
                 exercise = exercise,
                 onBackClick = { navController.popBackStack() },
-                onCompleteClick = {
-                    assigned.isComplete = true
+                onCompleteClick = { // onCompleteClick to navigate back when the exercise complete button is clicked.
                     navController.popBackStack()
                 }
             )
@@ -94,7 +95,14 @@ fun AppNavigationGraph(
         composable("settings") {
             SettingsScreen(
                 userViewModel = userViewModel,
-                navController = navController)
+                navController = navController
+            )
+        }
+
+        // User list screen, temporary view of users from azure cosmos db.
+        // TODO: change for physiotherapist program and exercise selecting.
+        composable("userList") {
+            UserListScreen()
         }
 
     }

@@ -5,6 +5,6 @@ data class User(
     val name: String,
     val email: String,
     var completedQuestionnaire: Boolean = false,
-    var assignedProgramIds: List<String> = emptyList(),
+    var assignedProgramId: String,
     val earnedBadgeIds: List<String>
 )

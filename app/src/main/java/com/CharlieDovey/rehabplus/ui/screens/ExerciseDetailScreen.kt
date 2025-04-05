@@ -96,14 +96,14 @@ fun ExerciseDetailScreen(
         }
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Full Description
+        // Full Description.
         Text("Exercise description:", fontWeight = FontWeight.Bold, fontSize = 16.sp)
         Spacer(modifier = Modifier.height(4.dp))
         Text(exercise.longDescription, fontSize = 14.sp)
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Complete button
+        // Exercise completed button.
         Button(
             onClick = onCompleteClick,
             modifier = Modifier

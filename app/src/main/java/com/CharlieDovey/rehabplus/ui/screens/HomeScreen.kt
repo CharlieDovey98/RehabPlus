@@ -22,10 +22,11 @@ import androidx.compose.runtime.collectAsState
 import com.charliedovey.rehabplus.viewmodel.UserViewModel
 
 @Composable
-fun HomeScreen(userViewModel: UserViewModel) {
+fun HomeScreen(userViewModel: UserViewModel, onProgramClick: () -> Unit) {
     val scrollState = rememberScrollState()
     // Update on state change to get the currently logged in user from the ViewModel using StateFlow.
     val user = userViewModel.currentUser.collectAsState().value
+    val assignedProgram = userViewModel.assignedProgram.collectAsState().value
 
     Column(
         modifier = Modifier
@@ -63,7 +64,7 @@ fun HomeScreen(userViewModel: UserViewModel) {
                         .background(Color.LightGray, shape = RoundedCornerShape(8.dp)),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("questionnaire image")
+                    Text("questionnaire prompt")
                 }
             }
         }
@@ -77,9 +78,11 @@ fun HomeScreen(userViewModel: UserViewModel) {
             Column(modifier = Modifier.padding(12.dp)) {
                 Text("Key information!", fontWeight = FontWeight.Bold, fontSize = 18.sp)
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("* Why follow a program?")
+                Text("* Why follow a program?", fontWeight = FontWeight.SemiBold)
+                Text("Using RehapPlus is a step in the right direction. Your rehabilitation program is tailored to your needs, helping to ease your symptoms and aid your recovery.")
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("* Why program adherence matters!")
+                Text("* Why program adherence matters!", fontWeight = FontWeight.SemiBold)
+                Text("Skipping workouts slows your progress. Completing your exercises daily improves mobility and speeds up recovery time. Small efforts daily make a big difference!")
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
@@ -90,71 +93,69 @@ fun HomeScreen(userViewModel: UserViewModel) {
             shape = RoundedCornerShape(8.dp)
         ) {
             Column(modifier = Modifier.padding(12.dp)) {
-                Text("My Programs", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                Text("My Program", fontWeight = FontWeight.Bold, fontSize = 18.sp)
                 Spacer(modifier = Modifier.height(8.dp))
-                Button(
-                    onClick = { /* Navigate to ACL rehabilitation program screen*/ },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("ACL rehabilitation program")
+                if (assignedProgram != null) {
+                    Button(
+                        onClick = { onProgramClick() },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(assignedProgram.name)
+                    }
+
+                } else {
+                    Text("Please wait for your physiotherapist to assign a personalised exercise program.")
                 }
-                Spacer(modifier = Modifier.height(8.dp))
-                Button(
-                    onClick = { /* Navigate to Hip Strengthening program screen */ },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Hip Strengthening program")
                 }
             }
-        }
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        // Statistics dashboard card.
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(8.dp)
-        ) {
+            // Statistics dashboard card.
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(8.dp)
+            ) {
 
-            Column(modifier = Modifier.padding(12.dp)) {
-                Text("My Statistics", fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.DateRange, contentDescription = "DateRange")
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("7 Day streak!", fontWeight = FontWeight.Bold)
+                Column(modifier = Modifier.padding(12.dp)) {
+                    Text("My Statistics", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Default.DateRange, contentDescription = "DateRange")
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("7 Day streak!", fontWeight = FontWeight.Bold)
 
-                }
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun").forEach {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(it)
-                            Text("✔")
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun").forEach {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text(it)
+                                Text("✔")
+                            }
                         }
                     }
                 }
             }
-        }
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        // Badges dashboard card.
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(8.dp)
-        ) {
+            // Badges dashboard card.
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(8.dp)
+            ) {
 
-            Column(modifier = Modifier.padding(12.dp)) {
-                Text("My Badges", fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                Spacer(modifier = Modifier.height(5.dp))
-                Text("First workout")
-                Spacer(modifier = Modifier.height(5.dp))
-                Text("7 Day Streak")
-                Spacer(modifier = Modifier.height(5.dp))
-                Text("100% a program")
+                Column(modifier = Modifier.padding(12.dp)) {
+                    Text("My Badges", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                    Spacer(modifier = Modifier.height(5.dp))
+                    Text("First workout")
+                    Spacer(modifier = Modifier.height(5.dp))
+                    Text("7 Day Streak")
+                    Spacer(modifier = Modifier.height(5.dp))
+                    Text("100% a program")
+                }
             }
         }
     }
-}

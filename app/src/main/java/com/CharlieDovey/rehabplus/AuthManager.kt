@@ -13,7 +13,8 @@ import kotlinx.coroutines.*
 // Project imports.
 import com.charliedovey.rehabplus.model.User
 import com.charliedovey.rehabplus.data.RetrofitInstance
-
+import com.charliedovey.rehabplus.data.userProgram.fetchFullAssignedProgram
+import com.charliedovey.rehabplus.viewmodel.UserViewModel
 
 /**
  * AuthManager handles MSAL authentication logic for the RehabPlus app.
@@ -60,7 +61,7 @@ object AuthManager {
     }
 
     // Function to call interactive sign in and return  a populated User object.
-    fun signIn(activity: Activity, callback: (User?) -> Unit) {
+    fun signIn(activity: Activity, userViewModel: UserViewModel,callback: (User?) -> Unit) {
         val app = msalApp
         if (app == null) {
             Log.e("AuthManager", "MSAL not initialised")
@@ -85,7 +86,7 @@ object AuthManager {
                         .startAuthorizationFromActivity(activity)
                         .withScopes(SCOPES)
                         .fromAuthority("https://rehabplusad.b2clogin.com/tfp/rehabplusad.onmicrosoft.com/$B2C_POLICY")
-                        .withCallback(getAuthCallback(callback))
+                        .withCallback(getAuthCallback(userViewModel, callback))
                         .build()
                 )
             }
@@ -99,7 +100,7 @@ object AuthManager {
     }
 
     // Callback function used when MSAL login finishes.
-    private fun getAuthCallback(callback: (User?) -> Unit): AuthenticationCallback {
+    private fun getAuthCallback(userViewModel: UserViewModel, callback: (User?) -> Unit ): AuthenticationCallback {
         return object : AuthenticationCallback {
 
             // Authentication success function to build the user object from the received token and find or create a new user to store in the Cosmos DB.
@@ -132,7 +133,7 @@ object AuthManager {
                             name = fullName,
                             email = email,
                             completedQuestionnaire = false,
-                            assignedProgramIds = emptyList(),
+                            assignedProgramId = "",
                             earnedBadgeIds = emptyList()
                         )
 
@@ -173,6 +174,22 @@ object AuthManager {
                         } else {
                             Log.d("AuthManager", "Creating user and adding them to the database.")
                             api.createUser(user)
+                        }
+                        // If the user has been assigned a program, fetch the program details from the database.
+                        val fullProgram = if (completedUser.assignedProgramId.isNotEmpty()) {
+                            fetchFullAssignedProgram(completedUser)
+                        } else {
+                            null // If the user has no assigned program return null.
+                        }
+
+                        // Set the full program to ViewModel or handle it in the UI callback
+                        withContext(Dispatchers.Main) {
+                                fullProgram?.let { (program, exerciseMap) ->
+                                    userViewModel.setAssignedProgram(program) // Call setAssignedProgram to update the users program in the userViewModel.
+                                    userViewModel.setExerciseMap(exerciseMap)// Call setExerciseMap to update the users exercise list in the userViewModel.
+                                }
+
+                            callback(completedUser) // Still return the user back to the UI
                         }
 
                         // Return completedUser back to the UI main thread after completion.

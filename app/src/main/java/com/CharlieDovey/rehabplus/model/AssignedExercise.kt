@@ -9,6 +9,5 @@ data class AssignedExercise(
     val exerciseId: String,
     var reps: Int,
     var sets: Int,
-    var holdTime: Int = 0,
-    var isComplete: Boolean = false
+    var holdTime: Int = 0
 )
