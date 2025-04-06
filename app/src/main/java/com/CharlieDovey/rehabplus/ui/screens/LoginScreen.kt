@@ -4,15 +4,19 @@ package com.charliedovey.rehabplus.ui.screens
 import android.app.Activity
 // Import Toast, non intrusive, temporary popup messages.
 import android.widget.Toast
-
 // Jetpack Compose UI elements
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.background
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 // Project imports.
 import com.charliedovey.rehabplus.AuthManager
 import com.charliedovey.rehabplus.model.User
@@ -23,13 +27,14 @@ import com.charliedovey.rehabplus.viewmodel.UserViewModel
  * This file uses jetpack compose ui for the sign in screen, with toast feedback messages.
  */
 
-// A @Composable function from Jetpack Compose UI.
+// A @Composable function to hold the sign in screen for RehabPlus.
 @Composable
 fun LoginScreen(
     userViewModel: UserViewModel,
     onLoginSuccess: () -> Unit
 ) { // Callback to run the function when login has been achieved.
-    val context = LocalContext.current // Access the current Android Context inside this loginScreen Composable.
+    val context =
+        LocalContext.current // Access the current Android Context inside this loginScreen Composable.
     val activity = context as? Activity
 
     // This state variable tracks if the application is the middle of a sign in attempt.
@@ -46,6 +51,21 @@ fun LoginScreen(
 
             Text("Welcome to RehabPlus", style = MaterialTheme.typography.headlineMedium)
             Spacer(modifier = Modifier.height(32.dp))
+
+            // Show the RehabPlus logo.
+            AsyncImage(
+                model = "https://rehabplusmedia.blob.core.windows.net/images/RehabPlus.png",
+                contentDescription = "RehabPlus Logo",
+                modifier = Modifier
+                    .height(300.dp)
+                    .fillMaxSize()
+                    .padding(bottom = 64.dp)
+            )
+            Text(
+                "Please sign up or sign in to continue...",
+                fontSize = 18.sp
+            )
+            Spacer(modifier = Modifier.height(64.dp))
 
             // Sign In button.
             Button(
@@ -80,7 +100,7 @@ fun LoginScreen(
                 },
                 enabled = !isLoading // Disable the button if its loading.
             ) {
-                Text(if (isLoading) "Signing in... Please wait" else "Sign In") // Change button text with loading state.
+                Text(if (isLoading) "Signing in... Please wait" else "Sign In to RehabPlus") // Change button text with loading state.
             }
         }
     }
