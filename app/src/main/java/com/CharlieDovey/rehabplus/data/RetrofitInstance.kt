@@ -9,6 +9,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 // Import Retrofit for making HTTP requests.
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import java.util.concurrent.TimeUnit
 
 /**
  * RetrofitInstance is a singleton object that sets up and configures Retrofit for network requests.
@@ -27,6 +28,9 @@ object RetrofitInstance {
 
     // Define OkHttpClient with logging to show HTTP request and response details in logcat.
     private val client = OkHttpClient.Builder()
+        .connectTimeout(30, TimeUnit.SECONDS)  // Increase the timeout to 30 seconds.
+        .readTimeout(30, TimeUnit.SECONDS) // to allow the HTTP requests more time.
+        .writeTimeout(30, TimeUnit.SECONDS)
         .addInterceptor(HttpLoggingInterceptor().apply {
             setLevel(HttpLoggingInterceptor.Level.BODY)
         }).build()

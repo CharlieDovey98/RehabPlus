@@ -88,7 +88,7 @@ fun SettingsScreen(userViewModel: UserViewModel, navController: NavHostControlle
                             userViewModel.clearAssignedProgram() // Clear the user specific assigned program from the view model.
                             navController.navigate("login") { // Call the navigation controller to move to the login screen.
                                 // Remove all screens from the backstack so the user cannot return into the app after signing out.
-                                popUpTo(navController.graph.startDestinationId) {
+                                popUpTo(navController.graph.startDestinationId) { // TODO: move into the navigationgraph.
                                     inclusive = true // Remove the start destination from the stack.
                                 }
                                 launchSingleTop = true // Avoid multiple instances of login.

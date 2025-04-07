@@ -7,6 +7,7 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 // Project import.
 import com.charliedovey.rehabplus.model.*
+import retrofit2.Response
 
 
 /**
@@ -39,5 +40,10 @@ interface AzureApi {
     @GET("getExercises")
     suspend fun getExercises(): List<Exercise>
 
+    @POST("createQuestionnaire")
+    suspend fun submitQuestionnaire(@Body questionnaire: Questionnaire): Response<Unit>
+
+    @POST("markQuestionnaireComplete")
+    suspend fun markQuestionnaireComplete(@Body payload: Map<String, String>): Response<Unit>
 
 }

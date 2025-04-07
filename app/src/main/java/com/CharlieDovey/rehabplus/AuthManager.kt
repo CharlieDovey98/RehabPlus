@@ -182,14 +182,14 @@ object AuthManager {
                             null // If the user has no assigned program return null.
                         }
 
-                        // Set the full program to ViewModel or handle it in the UI callback
+                        // Set the full program to ViewModel or handle it in the UI callback.
                         withContext(Dispatchers.Main) {
                                 fullProgram?.let { (program, exerciseMap) ->
                                     userViewModel.setAssignedProgram(program) // Call setAssignedProgram to update the users program in the userViewModel.
                                     userViewModel.setExerciseMap(exerciseMap)// Call setExerciseMap to update the users exercise list in the userViewModel.
                                 }
 
-                            callback(completedUser) // Still return the user back to the UI
+                            userViewModel.setCurrentUser(completedUser) // Update the user viewmodel to the completed user.
                         }
 
                         // Return completedUser back to the UI main thread after completion.

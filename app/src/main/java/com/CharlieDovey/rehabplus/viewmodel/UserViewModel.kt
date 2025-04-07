@@ -72,4 +72,8 @@ class UserViewModel : ViewModel() {
         _exerciseMap.value = map
     }
 
+    // markQuestionnaireComplete sets the user variable completedQuestionnaire to true.
+    fun markQuestionnaireComplete() {
+        _currentUser.value = _currentUser.value?.copy(completedQuestionnaire = true)
+    }
 }

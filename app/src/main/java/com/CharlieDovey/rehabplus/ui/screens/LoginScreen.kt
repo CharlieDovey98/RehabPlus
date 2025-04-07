@@ -2,24 +2,18 @@ package com.charliedovey.rehabplus.ui.screens
 
 // Importing necessary libraries for Android and Jetpack Compose.
 import android.app.Activity
-// Import Toast, non intrusive, temporary popup messages.
-import android.widget.Toast
-// Jetpack Compose UI elements
+import android.widget.Toast // Import Toast, non intrusive, temporary popup messages.
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.background
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 // Project imports.
 import com.charliedovey.rehabplus.AuthManager
-import com.charliedovey.rehabplus.model.User
 import com.charliedovey.rehabplus.viewmodel.UserViewModel
 
 /**
@@ -85,7 +79,6 @@ fun LoginScreen(
                                     "Welcome, ${user.name}",
                                     Toast.LENGTH_LONG
                                 ).show()
-                                userViewModel.setCurrentUser(user) // set the userViewModels current user.
                                 onLoginSuccess() // Call the function to move to the Homescreen.
                             } else {
                                 // Else show failed message if sign in failed.
@@ -100,7 +93,7 @@ fun LoginScreen(
                 },
                 enabled = !isLoading // Disable the button if its loading.
             ) {
-                Text(if (isLoading) "Signing in... Please wait" else "Sign In to RehabPlus") // Change button text with loading state.
+                Text(if (isLoading) "Redirecting... Please wait" else "Sign In to RehabPlus") // Change button text with loading state.
             }
         }
     }

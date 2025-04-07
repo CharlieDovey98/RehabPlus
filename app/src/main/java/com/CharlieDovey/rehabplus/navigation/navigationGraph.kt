@@ -37,16 +37,35 @@ fun AppNavigationGraph(
             LoginScreen(
                 userViewModel = userViewModel,
                 onLoginSuccess = {
-                    navController.navigate("home") {
-                        popUpTo("login") { inclusive = true }
+                    if (userViewModel.currentUser.value?.completedQuestionnaire == true) {
+                        navController.navigate("home") {
+                            popUpTo("login") { inclusive = true }
+                        }
+                    } else {
+                        navController.navigate("questionnaire") {
+                            popUpTo("login") { inclusive = true }
+                        }
                     }
                 }
             )
         }
 
+        composable("questionnaire") {
+            QuestionnaireScreen(
+                userViewModel = userViewModel,
+                onSubmitClick = {
+                    navController.navigate("home") {
+                        popUpTo("questionnaire") { inclusive = true }
+                    }
+                }
+            )
+        }
+
+
         // Home screen route.
         composable("home") {
-            HomeScreen(userViewModel = userViewModel,
+            HomeScreen(
+                userViewModel = userViewModel,
                 onProgramClick = {
                     // On click navigate to the users Program screen.
                     navController.navigate("program")
@@ -70,7 +89,8 @@ fun AppNavigationGraph(
             // Extract the exerciseId from the navigation arguments.
             val exerciseId = backStackEntry.arguments?.getString("exerciseId") ?: return@composable
             // Find the assigned exercise in the current program using the ID.
-            val assigned = program?.assignedExercises?.find { it.exerciseId == exerciseId } ?: return@composable
+            val assigned = program?.assignedExercises?.find { it.exerciseId == exerciseId }
+                ?: return@composable
             // Use the ID to get the full exercise object from the map.
             val exercise = exerciseMap[exerciseId] ?: return@composable
 

@@ -1,7 +1,6 @@
 package com.charliedovey.rehabplus.ui.screens
 
 // Import necessary libraries for Jetpack Compose.
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -11,13 +10,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 // Project Imports.
 import com.charliedovey.rehabplus.viewmodel.UserViewModel
 
@@ -27,6 +26,16 @@ fun HomeScreen(userViewModel: UserViewModel, onProgramClick: () -> Unit) {
     // Update on state change to get the currently logged in user from the ViewModel using StateFlow.
     val user = userViewModel.currentUser.collectAsState().value
     val assignedProgram = userViewModel.assignedProgram.collectAsState().value
+
+    val tips = listOf( // A list of tips to be displayed on the homeScreen to the user.
+        "* Take small breaks between exercises.",
+        "* Stay hydrated throughout the day.",
+        "* Breathe deeply and move with control.",
+        "* Make sure to get enough sleep.",
+        "* Consistency is more important than intensity."
+    )
+
+    val dailyTip = remember { tips.random() } // Select a random tip from the tips list.
 
     Column(
         modifier = Modifier
@@ -55,17 +64,9 @@ fun HomeScreen(userViewModel: UserViewModel, onProgramClick: () -> Unit) {
 
                 }
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("* Please fill out the questionnaire") // need checks for if the user has completed.
+                Text("* Your RehablPlus top tip:")
                 Spacer(modifier = Modifier.height(8.dp))
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(100.dp)
-                        .background(Color.LightGray, shape = RoundedCornerShape(8.dp)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("questionnaire prompt")
-                }
+                Text(dailyTip, style = MaterialTheme.typography.bodyLarge) // Display the RehablPLus top top.
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
